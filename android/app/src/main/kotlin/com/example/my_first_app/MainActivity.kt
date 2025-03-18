@@ -1,4 +1,4 @@
-package com.example.my_first_app
+package com.luarsekolah.taskhub
 
 import io.flutter.embedding.android.FlutterActivity
 
