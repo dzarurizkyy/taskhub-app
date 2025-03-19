@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:provider/provider.dart';
 import '../helpers/validation.dart';
 import '../widgets/header/logo.dart';
@@ -37,8 +38,12 @@ class _LoginState extends State<Login> {
 
   bool _attemptLogin() {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    bool isSuccess =
-        userProvider.loginUser(emailController.text, passController.text);
+    final sanitizeText = HtmlUnescape();
+
+    bool isSuccess = userProvider.loginUser(
+      sanitizeText.convert(emailController.text),
+      sanitizeText.convert(passController.text),
+    );
 
     setState(() {
       isLoginSuccess = isSuccess;
