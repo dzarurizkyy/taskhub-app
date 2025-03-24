@@ -1,0 +1,2 @@
+/Users/dzarurizky/Documents/code/taskhub_app/android/app/.cxx/Debug/2e195u6h/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/dzarurizky/Documents/code/taskhub_app/android/app/.cxx/Debug/2e195u6h/armeabi-v7a/CMakeFiles/rebuild_cache.dir
