@@ -3,9 +3,10 @@ import 'package:taskhub_app/models/note.dart';
 import 'package:uuid/uuid.dart';
 
 class NoteProvider with ChangeNotifier {
-  final List<Note> notes = [];
+  final List<Note> _notes = [];
   final Uuid _uuid = Uuid();
 
+  List<Note> get notes => _notes;
   int get totalNote => notes.length;
 
   void addNote(
