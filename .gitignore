@@ -1,11 +1,13 @@
 .dart_tool/
 .packages
 build/
-doc/api/
+android/app/.cxx/Debug
 
 pubspec.lock
+doc/api/
 
 .env*
+
 *.dart.js
 *.info.json      
 *.js             
