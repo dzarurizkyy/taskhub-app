@@ -61,61 +61,58 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 28),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Logo(),
-                  SizedBox(height: 50),
-                  Form(
-                    key: formkey,
-                    child: Column(
-                      children: [
-                        InputText(
-                          autoFocus: true,
-                          title: "Your email address",
-                          hintText: "username@gmail.com",
-                          fillColor: Color.fromARGB(255, 255, 255, 255),
-                          controller: emailController,
-                          validate: validateEmail,
+    return Scaffold(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 28),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Logo(),
+                SizedBox(height: 50),
+                Form(
+                  key: formkey,
+                  child: Column(
+                    children: [
+                      InputText(
+                        autoFocus: true,
+                        title: "Your email address",
+                        hintText: "username@gmail.com",
+                        fillColor: Color.fromARGB(255, 255, 255, 255),
+                        controller: emailController,
+                        validate: validateEmail,
+                      ),
+                      SizedBox(height: 15),
+                      InputPassword(
+                        title: "Choose a password",
+                        hintText: "min. 8 characters",
+                        fillColor: Color.fromARGB(255, 255, 255, 255),
+                        controller: passController,
+                        validate: validatePassword,
+                      ),
+                      SizedBox(height: 30),
+                      SizedBox(
+                        width: double.infinity,
+                        child: SubmitButton(
+                          isButtonEnabled: isButtonEnabled,
+                          validation: _attemptLogin,
+                          successMessage: "Login Success",
+                          failedMessage: "Invalid email or password",
+                          successPadding: 65,
+                          failedPadding: 30,
+                          formkey: formkey,
                         ),
-                        SizedBox(height: 15),
-                        InputPassword(
-                          title: "Choose a password",
-                          hintText: "min. 8 characters",
-                          fillColor: Color.fromARGB(255, 255, 255, 255),
-                          controller: passController,
-                          validate: validatePassword,
-                        ),
-                        SizedBox(height: 30),
-                        SizedBox(
-                          width: double.infinity,
-                          child: SubmitButton(
-                            isButtonEnabled: isButtonEnabled,
-                            validation: _attemptLogin,
-                            successMessage: "Login Success",
-                            failedMessage: "Invalid email or password",
-                            successPadding: 65,
-                            failedPadding: 30,
-                            formkey: formkey,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-        backgroundColor: Colors.white,
       ),
+      backgroundColor: Colors.white,
     );
   }
 }

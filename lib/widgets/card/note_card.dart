@@ -20,10 +20,9 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(priority);
     return Container(
       width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
           color: Color.fromRGBO(255, 255, 255, 1.0),
           borderRadius: BorderRadius.circular(15),

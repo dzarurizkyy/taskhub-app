@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskhub_app/pages/home_page.dart';
 import '../notification/alert.dart';
 
 class SubmitButton extends StatefulWidget {
@@ -41,7 +42,8 @@ class _SubmitButtonState extends State<SubmitButton> {
                         backgroundColor: Colors.transparent,
                         elevation: 0,
                         content: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: widget.successPadding),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: widget.successPadding),
                           child: Alert(
                             icon: Icons.done_rounded,
                             colorAlert: Color.fromARGB(1000, 63, 125, 88),
@@ -50,6 +52,8 @@ class _SubmitButtonState extends State<SubmitButton> {
                         ),
                       ),
                     );
+                    Navigator.of(context)
+                        .pushReplacementNamed(HomePage.routeName);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -57,7 +61,8 @@ class _SubmitButtonState extends State<SubmitButton> {
                         backgroundColor: Colors.transparent,
                         elevation: 0,
                         content: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: widget.failedPadding),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: widget.failedPadding),
                           child: Alert(
                             icon: Icons.error_rounded,
                             colorAlert: Color.fromARGB(1000, 190, 49, 68),

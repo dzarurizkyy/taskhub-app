@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskhub_app/pages/home_page.dart';
 
 class NoteFormHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -12,8 +13,11 @@ class NoteFormHeader extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       leading: Padding(
         padding: EdgeInsets.only(left: 20, bottom: 10),
-        child: Icon(
-          Icons.arrow_back_rounded,
+        child: IconButton(
+          icon: Icon(Icons.arrow_back_rounded),
+          onPressed: () {
+            Navigator.of(context).pop(HomePage.routeName);
+          },
           color: Color.fromRGBO(113, 114, 118, 1.0),
         ),
       ),
