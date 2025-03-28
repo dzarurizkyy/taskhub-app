@@ -80,7 +80,7 @@ class _NoteTabbarState extends State<NoteTabbar> {
           day: DateFormat("EEE").format(note.date).toUpperCase(),
           date: DateFormat("d").format(note.date),
           title: note.title,
-          time: DateFormat("HH:MM a").format(note.date),
+          time: DateFormat("HH:MM").format(note.date),
           description: note.description,
           priority: note.priority,
         );

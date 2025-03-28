@@ -42,8 +42,16 @@ class _NoteFormState extends State<NoteForm> {
   }
 
   void _pickTime(BuildContext context) async {
-    final TimeOfDay? picked =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
 
     if (picked != null) {
       setState(() {
