@@ -1,5 +1,7 @@
 class User {
   final int id;
+  final String? name;
+  final String? gender;
   final String? email;
   final String? password;
   final String? createdAt;
@@ -7,6 +9,8 @@ class User {
 
   User({
     required this.id,
+    required this.name,
+    required this.gender,
     required this.email,
     required this.password,
     required this.createdAt,

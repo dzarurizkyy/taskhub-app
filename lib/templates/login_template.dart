@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../helpers/validation.dart';
-import '../widgets/header/logo.dart';
+import '../widgets/header/login_page_header.dart';
 import '../widgets/input/input_text.dart';
 import '../widgets/input/input_password.dart';
 import '../widgets/button/submit_button.dart';
@@ -49,7 +50,20 @@ class _LoginState extends State<Login> {
       isLoginSuccess = isSuccess;
     });
 
+    if (isSuccess) {
+      _saveUserToPrefs(
+        userProvider.currentUser!.name,
+        userProvider.currentUser!.gender,
+      );
+    }
+
     return isSuccess;
+  }
+
+  void _saveUserToPrefs(String? name, String? gender) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("name", name ?? '');
+    await prefs.setString("gender", gender ?? '');
   }
 
   @override
@@ -69,7 +83,7 @@ class _LoginState extends State<Login> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Logo(),
+                LoginPageHeader(),
                 SizedBox(height: 50),
                 Form(
                   key: formkey,
@@ -96,6 +110,8 @@ class _LoginState extends State<Login> {
                         width: double.infinity,
                         child: SubmitButton(
                           isButtonEnabled: isButtonEnabled,
+                          title: "Continue",
+                          titleBold: FontWeight.w700,
                           validation: _attemptLogin,
                           successMessage: "Login Success",
                           failedMessage: "Invalid email or password",

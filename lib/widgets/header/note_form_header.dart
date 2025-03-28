@@ -12,39 +12,40 @@ class NoteFormHeader extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       leading: Padding(
-        padding: EdgeInsets.only(left: 20, bottom: 10),
+        padding: EdgeInsets.only(left: 15),
         child: IconButton(
           icon: Icon(Icons.arrow_back_rounded),
           onPressed: () {
             Navigator.of(context).pop(HomePage.routeName);
           },
-          color: Color.fromRGBO(113, 114, 118, 1.0),
+          color: Color.fromRGBO(0, 0, 0, 1.0),
         ),
       ),
-      leadingWidth: 50,
+      leadingWidth: 45,
       title: Padding(
-        padding: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.only(bottom: 0),
         child: Text(
           title,
           style: TextStyle(
+            fontSize: 22,
             fontFamily: "Nunito",
             fontWeight: FontWeight.w800,
-            color: Color.fromRGBO(113, 114, 118, 1.0),
+            color: Color.fromRGBO(0, 0, 0, 1.0),
           ),
         ),
       ),
-      toolbarHeight: 45,
-      backgroundColor: Color.fromRGBO(255, 255, 255, 1.0),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      surfaceTintColor: Color.fromARGB(255, 255, 255, 255),
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(1.0),
         child: Container(
-          color: Color.fromRGBO(113, 114, 118, 0.2),
-          height: 2,
+          color: Color.fromRGBO(0, 0, 0, 0.1),
+          height: 1.4,
         ),
       ),
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(45);
+  Size get preferredSize => Size.fromHeight(50);
 }

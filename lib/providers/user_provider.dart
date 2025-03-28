@@ -5,6 +5,8 @@ class UserProvider with ChangeNotifier {
   final List<User> _allUser = [
     User(
       id: 1,
+      name: "Dzaru Rizky Fathan Fortuna",
+      gender: "male",
       email: "dzarurizkybusiness@gmail.com",
       password: "dzaru1234",
       createdAt: "2025-03-10 20:29:11",
@@ -12,8 +14,10 @@ class UserProvider with ChangeNotifier {
     ),
     User(
       id: 2,
-      email: "kirigayakazuto@sao.com",
-      password: "kirito1234",
+      name: "Yuuki Asuna",
+      gender: "female",
+      email: "yuukiasuna@yahoo.com",
+      password: "asuna2024",
       createdAt: "2025-03-10 22:00:00",
       updatedAt: "2025-03-10 22:00:00",
     )
@@ -27,6 +31,8 @@ class UserProvider with ChangeNotifier {
       (user) => user.email == email && user.password == password,
       orElse: () => User(
         id: 0,
+        name: null,
+        gender: null,
         email: null,
         password: null,
         createdAt: null,

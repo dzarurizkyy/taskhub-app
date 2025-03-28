@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import 'package:taskhub_app/helpers/datetime.dart';
 import 'package:taskhub_app/providers/note_provider.dart';
 import 'package:taskhub_app/widgets/button/select_button.dart';
-import 'package:taskhub_app/widgets/card/note_card.dart';
+import 'package:taskhub_app/widgets/button/submit_button.dart';
 import 'package:taskhub_app/widgets/header/note_form_header.dart';
 import 'package:taskhub_app/widgets/input/input_date.dart';
 import 'package:taskhub_app/widgets/input/input_description.dart';
@@ -24,10 +23,10 @@ class _NoteFormState extends State<NoteForm> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
+  late bool isButtonEnabled = false;
 
   late String _priority = "High";
   final List<String> _priorities = ["High", "Medium", "Low"];
-  late bool _isAttempt = false;
 
   void _pickDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
@@ -53,21 +52,49 @@ class _NoteFormState extends State<NoteForm> {
     }
   }
 
-  void _attemptNote() {
+  bool _attemptNote() {
     final noteProvider = Provider.of<NoteProvider>(context, listen: false);
     final sanitizeText = HtmlUnescape();
     final date = combineDateTime(_dateController.text, _timeController.text);
 
-    noteProvider.addNote(
-      sanitizeText.convert(_titleController.text),
-      sanitizeText.convert(_descriptionController.text),
-      date,
-      _priority,
-    );
+    try {
+      noteProvider.addNote(
+        sanitizeText.convert(_titleController.text),
+        sanitizeText.convert(_descriptionController.text),
+        date,
+        _priority,
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
+  @override
+  void initState() {
+    super.initState();
+    _titleController.addListener(_onInputChanged);
+    _descriptionController.addListener(_onInputChanged);
+    _dateController.addListener(_onInputChanged);
+    _timeController.addListener(_onInputChanged);
+  }
+
+  void _onInputChanged() {
     setState(() {
-      _isAttempt = true;
+      isButtonEnabled = _titleController.text.isNotEmpty &&
+          _descriptionController.text.isNotEmpty &&
+          _dateController.text.isNotEmpty &&
+          _timeController.text.isNotEmpty;
     });
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _dateController.dispose();
+    _timeController.dispose();
+    super.dispose();
   }
 
   @override
@@ -76,7 +103,7 @@ class _NoteFormState extends State<NoteForm> {
       appBar: NoteFormHeader(title: "Add Task"),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
           child: Wrap(
             runSpacing: 15,
             children: [
@@ -143,69 +170,35 @@ class _NoteFormState extends State<NoteForm> {
                               });
                             },
                           ),
+                          SizedBox(height: 40),
+                          Container(
+                            margin: EdgeInsets.only(top: 10, bottom: 15),
+                            width: double.infinity,
+                            child: SubmitButton(
+                              formkey: formkey,
+                              isButtonEnabled: isButtonEnabled,
+                              title: "Add Note",
+                              titleBold: FontWeight.w800,
+                              successMessage: "Your note has been saved",
+                              failedMessage:
+                                  "Failed to add note. Please try again",
+                              successPadding: 40,
+                              failedPadding: 30,
+                              validation: _attemptNote,
+                            ),
+                          )
                         ],
                       ),
                     ),
                   ),
                 ),
               ),
-              Consumer<NoteProvider>(
-                builder: (context, noteProvider, child) {
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (context, index) {
-                      final note = noteProvider.notes[index];
-                      return NoteCard(
-                        title: note.title,
-                        description: note.description,
-                        priority: note.priority,
-                        day: DateFormat("EEE").format(note.date).toUpperCase(),
-                        date: DateFormat("d").format(note.date),
-                        time: DateFormat("HH:mm a").format(note.date),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return Divider(
-                        color: Color.fromRGBO(248, 244, 244, 1.0),
-                        height: 15,
-                      );
-                    },
-                    itemCount: noteProvider.totalNote,
-                  );
-                },
-              ),
             ],
           ),
         ),
       ),
       resizeToAvoidBottomInset: false,
-      floatingActionButton: FloatingActionButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        onPressed: () {
-          _attemptNote();
-
-          Future.delayed(Duration(seconds: 5), () {
-            setState(() {
-              _isAttempt = false;
-            });
-          });
-        },
-        elevation: 0,
-        backgroundColor: _isAttempt
-            ? Color.fromRGBO(79, 197, 135, 1.000)
-            : Color.fromRGBO(53, 182, 215, 1.000),
-        child: Icon(
-          _isAttempt ? Icons.done : Icons.add_rounded,
-          color: Color.fromRGBO(255, 255, 255, 1.0),
-          size: 30,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      backgroundColor: Color.fromRGBO(248, 244, 244, 1.0),
+      backgroundColor: Color.fromRGBO(252, 250, 250, 1),
     );
   }
 }

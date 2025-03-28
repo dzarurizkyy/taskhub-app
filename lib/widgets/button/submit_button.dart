@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:taskhub_app/pages/home_page.dart';
+import 'package:taskhub_app/helpers/animation.dart';
 import '../notification/alert.dart';
 
 class SubmitButton extends StatefulWidget {
   final GlobalKey<FormState> formkey;
   final bool isButtonEnabled;
+  final String title;
+  final FontWeight titleBold;
   final String successMessage;
   final String failedMessage;
   final double successPadding;
@@ -14,6 +16,8 @@ class SubmitButton extends StatefulWidget {
   const SubmitButton({
     super.key,
     required this.formkey,
+    required this.title,
+    required this.titleBold,
     required this.isButtonEnabled,
     required this.successMessage,
     required this.failedMessage,
@@ -27,69 +31,69 @@ class SubmitButton extends StatefulWidget {
 }
 
 class _SubmitButtonState extends State<SubmitButton> {
+  void _showSnackBar(BuildContext context, bool isSuccess) {
+    final snackBar = SnackBar(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      duration: Duration(milliseconds: 900),
+      elevation: 0,
+      content: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: isSuccess ? widget.successPadding : widget.failedPadding,
+        ),
+        child: Alert(
+          icon: isSuccess ? Icons.done_rounded : Icons.error_rounded,
+          colorAlert: isSuccess
+              ? const Color.fromARGB(1000, 63, 125, 88)
+              : const Color.fromARGB(1000, 190, 49, 68),
+          message: isSuccess ? widget.successMessage : widget.failedMessage,
+        ),
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _handleSubmit() async {
+    if (widget.formkey.currentState!.validate()) {
+      bool isValid = widget.validation();
+
+      if (isValid) {
+        _showSnackBar(context, true);
+        await Future.delayed(Duration(milliseconds: 950));
+        if (!mounted) return;
+
+        switch (widget.title) {
+          case "Continue":
+            Navigator.of(context).pushReplacement(loginTransition());
+          case "Add Note":
+            Navigator.of(context).pop(addNoteTransition());
+        }
+      } else {
+        _showSnackBar(context, false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) => ElevatedButton(
-        onPressed: widget.isButtonEnabled
-            ? () {
-                if (widget.formkey.currentState!.validate()) {
-                  bool isValid = widget.validation();
-                  if (isValid == true) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        content: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: widget.successPadding),
-                          child: Alert(
-                            icon: Icons.done_rounded,
-                            colorAlert: Color.fromARGB(1000, 63, 125, 88),
-                            message: widget.successMessage,
-                          ),
-                        ),
-                      ),
-                    );
-                    Navigator.of(context)
-                        .pushReplacementNamed(HomePage.routeName);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        content: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: widget.failedPadding),
-                          child: Alert(
-                            icon: Icons.error_rounded,
-                            colorAlert: Color.fromARGB(1000, 190, 49, 68),
-                            message: widget.failedMessage,
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                }
-              }
-            : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Color.fromARGB(1000, 32, 180, 224),
-          padding: EdgeInsets.symmetric(vertical: 14),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
+    return ElevatedButton(
+      onPressed: widget.isButtonEnabled ? _handleSubmit : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(1000, 32, 180, 224),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
         ),
-        child: Text(
-          "Continue",
-          style: TextStyle(
-              fontFamily: "Nunito",
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Color.fromARGB(255, 255, 255, 255)),
+      ),
+      child: Text(
+        widget.title,
+        style: TextStyle(
+          fontFamily: "Nunito",
+          fontSize: 14,
+          fontWeight: widget.titleBold,
+          color: Colors.white,
         ),
       ),
     );

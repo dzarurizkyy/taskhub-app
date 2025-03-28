@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class Logo extends StatefulWidget {
-  const Logo({super.key});
+class LoginPageHeader extends StatefulWidget {
+  const LoginPageHeader({super.key});
 
   @override
-  State<Logo> createState() => _LogoState();
+  State<LoginPageHeader> createState() => _LoginPageHeaderState();
 }
 
-class _LogoState extends State<Logo> {
+class _LoginPageHeaderState extends State<LoginPageHeader> {
   @override
   Widget build(BuildContext context) {
     return Padding(

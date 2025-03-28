@@ -9,7 +9,7 @@ class InputTitle extends StatefulWidget {
     super.key,
     required this.title,
     required this.hint,
-    required this.controller
+    required this.controller,
   });
 
   @override
