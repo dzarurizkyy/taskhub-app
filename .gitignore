@@ -6,6 +6,10 @@ ios/Flutter
 macos/Flutter
 macos/Podfile
 ios/Podfile
+macos/Runner.xcodeproj
+macos/Runner.xcworkspace
+ios/Runner.xcodeproj
+ios/Runner.xcworkspace
 
 pubspec.lock
 doc/api/

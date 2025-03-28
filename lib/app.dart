@@ -26,7 +26,7 @@ class App extends StatelessWidget {
           LoginPage.routeName: (ctx) => LoginPage(),
           HomePage.routeName: (ctx) => HomePage(),
           AddNotePage.routeName: (ctx) => AddNotePage(),
-          ProfilePage.pageRoute: (ctx) => ProfilePage(),
+          ProfilePage.routeName: (ctx) => ProfilePage(),
         },
       ),
     );

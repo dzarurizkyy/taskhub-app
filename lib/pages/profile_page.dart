@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taskhub_app/widgets/bottom/navigation_bar_bottom.dart';
 
 class ProfilePage extends StatelessWidget {
-  static const pageRoute = "/profile";
+  static const routeName = "/profile";
   const ProfilePage({super.key});
 
   @override
