@@ -2,10 +2,10 @@
 .packages
 build/
 android/app/.cxx/Debug
-ios/Flutter
-macos/Flutter
-macos/Podfile
-ios/Podfile
+# ios/Flutter
+# macos/Flutter
+# macos/Podfile
+# ios/Podfile
 
 
 pubspec.lock
