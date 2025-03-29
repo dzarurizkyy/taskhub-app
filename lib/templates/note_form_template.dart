@@ -43,8 +43,16 @@ class _NoteFormState extends State<NoteForm> {
   }
 
   void _pickTime(BuildContext context) async {
-    final TimeOfDay? picked =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
 
     if (picked != null) {
       setState(() {
@@ -166,7 +174,7 @@ class _NoteFormState extends State<NoteForm> {
                           day:
                               DateFormat("EEE").format(note.date).toUpperCase(),
                           date: DateFormat("d").format(note.date),
-                          time: DateFormat("HH:mm a").format(note.date),
+                          time: DateFormat("HH:mm").format(note.date),
                         );
                       },
                       separatorBuilder: (context, index) {
