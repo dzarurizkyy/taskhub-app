@@ -1,83 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:taskhub_app/models/note.dart';
+import 'package:taskhub_app/service/note_service.dart';
 import 'package:uuid/uuid.dart';
 
 class NoteProvider with ChangeNotifier {
-  final List<Note> _notes = [
-    Note(
-      id: "1a2b3c4d-1234-5678-9101-abcdef123456",
-      title: "Daily Standup Meeting",
-      description: "Discuss project progress with the team.",
-      date: DateTime.parse("2025-03-28 09:00:00"),
-      priority: "High",
-      createdAt: DateTime.parse("2025-03-28 07:30:00"),
-      updatedAt: DateTime.parse("2025-03-28 07:30:00"),
-    ),
-    Note(
-      id: "2b3c4d5e-2345-6789-0123-bcdef2345678",
-      title: "Code Review PR #42",
-      description: "Check the latest pull request and give feedback.",
-      date: DateTime.parse("2025-03-29 14:00:00"),
-      priority: "Medium",
-      createdAt: DateTime.parse("2025-03-28 10:15:00"),
-      updatedAt: DateTime.parse("2025-03-28 10:15:00"),
-    ),
-    Note(
-      id: "3c4d5e6f-3456-7890-1234-cdef34567890",
-      title: "Doctor Appointment",
-      description: "Routine check-up with Dr. Adam.",
-      date: DateTime.parse("2025-03-30 11:30:00"),
-      priority: "Low",
-      createdAt: DateTime.parse("2025-03-28 12:00:00"),
-      updatedAt: DateTime.parse("2025-03-28 12:00:00"),
-    ),
-    Note(
-      id: "4d5e6f7g-4567-8901-2345-def456789012",
-      title: "Grocery Shopping",
-      description: "Buy vegetables, chicken, and coffee for the week.",
-      date: DateTime.parse("2025-03-31 17:30:00"),
-      priority: "Medium",
-      createdAt: DateTime.parse("2025-03-28 13:45:00"),
-      updatedAt: DateTime.parse("2025-03-28 13:45:00"),
-    ),
-    Note(
-      id: "5e6f7g8h-5678-9012-3456-ef5678901234",
-      title: "Gym Workout",
-      description: "Focus on strength training and cardio.",
-      date: DateTime.parse("2025-04-01 07:00:00"),
-      priority: "High",
-      createdAt: DateTime.parse("2025-03-28 15:00:00"),
-      updatedAt: DateTime.parse("2025-03-28 15:00:00"),
-    ),
-    Note(
-      id: "6f7g8h9i-6789-0123-4567-f67890123456",
-      title: "Flutter Learning Session",
-      description: "Explore Flutter state management with Provider.",
-      date: DateTime.parse("2025-04-02 20:00:00"),
-      priority: "Low",
-      createdAt: DateTime.parse("2025-03-28 16:30:00"),
-      updatedAt: DateTime.parse("2025-03-28 16:30:00"),
-    ),
-  ];
-
+  final List<Note> _notes = [];
   final Uuid _uuid = Uuid();
-
+  final NoteService _noteService = NoteService();
   List<Note> get notes => _notes;
-  int get totalNote => notes.length;
 
-  List<Note> findByPriority(String priority) {
-    final filteredNotes =
-        notes.where((note) => note.priority == priority).toList();
-
-    return filteredNotes;
-  }
-
-  List<Note> findByTitle(String title) {
-    final filteredNotes = notes
-        .where((note) => note.title.toLowerCase().contains(title.toLowerCase()))
-        .toList();
-
-    return filteredNotes;
+  Future<void> fetchNotes() async {
+    final fetchedNotes = await _noteService.fetchNote();
+    _notes.clear();
+    _notes.addAll(fetchedNotes);
+    notifyListeners();
   }
 
   void addNote(
@@ -86,17 +22,83 @@ class NoteProvider with ChangeNotifier {
     DateTime date,
     String priority,
   ) {
-    notes.add(
-      Note(
-        id: _uuid.v4(),
+    final newNote = Note(
+      id: _uuid.v4(),
+      title: title,
+      description: description,
+      date: date,
+      priority: priority,
+      section: "In Progress",
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+    _notes.add(newNote);
+    _noteService.createNote(newNote);
+    notifyListeners();
+  }
+
+  void editNote(
+    String id,
+    String title,
+    String description,
+    DateTime date,
+    String priority,
+  ) {
+    final noteIndex = notes.indexWhere((note) => note.id == id);
+    if (noteIndex != 1) {
+      final updatedNote = Note(
+        id: id,
         title: title,
         description: description,
         date: date,
         priority: priority,
-        createdAt: DateTime.now(),
+        section: "In Progress",
+        createdAt: notes[noteIndex].createdAt,
         updatedAt: DateTime.now(),
-      ),
-    );
+      );
+
+      _notes[noteIndex] = updatedNote;
+      _noteService.editNote(updatedNote);
+      notifyListeners();
+    }
+  }
+
+  void updateNoteSection(String id) {
+    final noteIndex = notes.indexWhere((note) => note.id == id);
+    if (noteIndex != 1) {
+      final updateNote = Note(
+        id: id,
+        title: notes[noteIndex].title,
+        description: notes[noteIndex].description,
+        date: notes[noteIndex].date,
+        priority: notes[noteIndex].priority,
+        section: "Completed",
+        createdAt: notes[noteIndex].createdAt,
+        updatedAt: DateTime.now(),
+      );
+
+      _notes[noteIndex] = updateNote;
+      notifyListeners();
+    }
+  }
+
+  void deleteNote(String id) {
+    _notes.removeWhere((note) => note.id == id);
+    _noteService.deleteNote(id);
     notifyListeners();
+  }
+
+  Note findByID(String id) {
+    return notes.firstWhere((note) => note.id == id);
+  }
+
+  List<Note> findByPriority(String priority) {
+    return notes.where((note) => note.priority == priority).toList();
+  }
+
+  List<Note> findByTitle(String title) {
+    return notes
+        .where((note) => note.title.toLowerCase().contains(title.toLowerCase()))
+        .toList();
   }
 }

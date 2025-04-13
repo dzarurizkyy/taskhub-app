@@ -40,6 +40,7 @@ class _InputPasswordState extends State<InputPassword> {
         SizedBox(height: 12),
         TextFormField(
           validator: widget.validate,
+          enableSuggestions: false,
           controller: widget.controller,
           obscureText: isObscure,
           style: TextStyle(

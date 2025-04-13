@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:taskhub_app/templates/note_form_template.dart';
 
-class AddNotePage extends StatelessWidget {
-  static const routeName = "/add-note";
-  const AddNotePage({super.key});
+class EditNotePage extends StatelessWidget {
+  static const routeName = "/edit-note";
+  const EditNotePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return NoteForm(option: "add");
+    return NoteForm(option: "edit");
   }
 }

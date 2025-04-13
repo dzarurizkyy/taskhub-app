@@ -82,6 +82,7 @@ class _HomePageHeaderState extends State<HomePageHeader> {
               ],
             ),
             TextFormField(
+              autofocus: false,
               style: TextStyle(
                 fontSize: 15,
                 fontFamily: "Nunito",

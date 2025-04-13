@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taskhub_app/providers/note_provider.dart';
 import '../templates/home_template.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,6 +34,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _loadUserFromPrefs();
+    Future.microtask(() {
+      if (!mounted) return;
+      Provider.of<NoteProvider>(context, listen: false).fetchNotes();
+    });
   }
 
   @override

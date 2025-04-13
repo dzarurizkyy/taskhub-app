@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class SelectButton extends StatefulWidget {
   final String title;
   final List<String> choice;
+  final String priority;
   final ValueChanged<String> selected;
 
   const SelectButton({
     super.key,
     required this.title,
     required this.choice,
+    required this.priority,
     required this.selected,
   });
 
@@ -17,10 +19,17 @@ class SelectButton extends StatefulWidget {
 }
 
 class _SelectButtonState extends State<SelectButton> {
-  int selectedIndex = 0;
-
   @override
   Widget build(BuildContext context) {
+    int getIndex(String option) {
+      return option == "Low"
+          ? 2
+          : option == "Medium"
+              ? 1
+              : 0;
+    }
+
+    int selectedIndex = getIndex(widget.priority);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

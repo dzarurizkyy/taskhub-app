@@ -68,6 +68,8 @@ class _SubmitButtonState extends State<SubmitButton> {
             Navigator.of(context).pushReplacement(loginTransition());
           case "Add Note":
             Navigator.of(context).pop(addNoteTransition());
+          case "Edit Note":
+            Navigator.of(context).pop(addNoteTransition());
         }
       } else {
         _showSnackBar(context, false);

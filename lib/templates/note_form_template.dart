@@ -9,9 +9,11 @@ import 'package:taskhub_app/widgets/header/note_form_header.dart';
 import 'package:taskhub_app/widgets/input/input_date.dart';
 import 'package:taskhub_app/widgets/input/input_description.dart';
 import 'package:taskhub_app/widgets/input/input_title.dart';
+import 'package:taskhub_app/models/note.dart';
 
 class NoteForm extends StatefulWidget {
-  const NoteForm({super.key});
+  final String option;
+  const NoteForm({super.key, required this.option});
 
   @override
   State<NoteForm> createState() => _NoteFormState();
@@ -66,12 +68,23 @@ class _NoteFormState extends State<NoteForm> {
     final date = combineDateTime(_dateController.text, _timeController.text);
 
     try {
-      noteProvider.addNote(
-        sanitizeText.convert(_titleController.text),
-        sanitizeText.convert(_descriptionController.text),
-        date,
-        _priority,
-      );
+      if (widget.option == "edit") {
+        final note = ModalRoute.of(context)!.settings.arguments as Note;
+        noteProvider.editNote(
+          note.id,
+          sanitizeText.convert(_titleController.text),
+          sanitizeText.convert(_descriptionController.text),
+          date,
+          _priority,
+        );
+      } else {
+        noteProvider.addNote(
+          sanitizeText.convert(_titleController.text),
+          sanitizeText.convert(_descriptionController.text),
+          date,
+          _priority,
+        );
+      }
       return true;
     } catch (e) {
       return false;
@@ -85,6 +98,23 @@ class _NoteFormState extends State<NoteForm> {
     _descriptionController.addListener(_onInputChanged);
     _dateController.addListener(_onInputChanged);
     _timeController.addListener(_onInputChanged);
+
+    Future.microtask(() {
+      if (widget.option == "edit") {
+        final note = ModalRoute.of(context)!.settings.arguments as Note;
+
+        _titleController.text = note.title;
+        _descriptionController.text = note.description;
+
+        final dateTime = note.date;
+        _dateController.text =
+            "${dateTime.day}/${dateTime.month}/${dateTime.year}";
+        _timeController.text =
+            "${dateTime.hour.toString().padLeft(2, "0")}:${dateTime.minute.toString().padLeft(2, "0")}";
+
+        _priority = note.priority;
+      }
+    });
   }
 
   void _onInputChanged() {
@@ -108,7 +138,9 @@ class _NoteFormState extends State<NoteForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: NoteFormHeader(title: "Add Task"),
+      appBar: NoteFormHeader(
+        title: widget.option == "add" ? "Add Page" : "Edit Page",
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
@@ -172,6 +204,7 @@ class _NoteFormState extends State<NoteForm> {
                           SelectButton(
                             title: "Priority",
                             choice: _priorities,
+                            priority: _priority,
                             selected: (value) {
                               setState(() {
                                 _priority = value;
@@ -185,12 +218,17 @@ class _NoteFormState extends State<NoteForm> {
                             child: SubmitButton(
                               formkey: formkey,
                               isButtonEnabled: isButtonEnabled,
-                              title: "Add Note",
+                              title: widget.option == "add"
+                                  ? "Add Note"
+                                  : "Edit Note",
                               titleBold: FontWeight.w800,
-                              successMessage: "Your note has been saved",
-                              failedMessage:
-                                  "Failed to add note. Please try again",
-                              successPadding: 40,
+                              successMessage: widget.option == "add"
+                                  ? "Your note has been saved"
+                                  : "Your note has been updated",
+                              failedMessage: widget.option == "add"
+                                  ? "Failed to add note. Please try again"
+                                  : "Failed to edit note. Please try again",
+                              successPadding: widget.option == "add" ? 40 : 30,
                               failedPadding: 30,
                               validation: _attemptNote,
                             ),

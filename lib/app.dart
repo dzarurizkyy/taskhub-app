@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:taskhub_app/pages/detail_note_page.dart';
+import 'package:taskhub_app/pages/edit_note_page.dart';
 import 'package:taskhub_app/pages/login_page.dart';
 import 'package:taskhub_app/pages/home_page.dart';
 import 'package:taskhub_app/pages/add_note_page.dart';
@@ -27,6 +29,8 @@ class App extends StatelessWidget {
           HomePage.routeName: (ctx) => HomePage(),
           AddNotePage.routeName: (ctx) => AddNotePage(),
           ProfilePage.routeName: (ctx) => ProfilePage(),
+          DetailNotePage.routeName: (ctx) => DetailNotePage(),
+          EditNotePage.routeName: (ctx) => EditNotePage(),
         },
       ),
     );

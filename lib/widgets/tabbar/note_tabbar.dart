@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animations/animations.dart';
@@ -76,14 +75,7 @@ class _NoteTabbarState extends State<NoteTabbar> {
       key: ValueKey(value),
       itemBuilder: (context, index) {
         final note = notes[index];
-        return NoteCard(
-          day: DateFormat("EEE").format(note.date).toUpperCase(),
-          date: DateFormat("d").format(note.date),
-          title: note.title,
-          time: DateFormat("HH:MM").format(note.date),
-          description: note.description,
-          priority: note.priority,
-        );
+        return NoteCard(note: note);
       },
       separatorBuilder: (context, index) {
         return Divider(
