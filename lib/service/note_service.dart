@@ -27,14 +27,16 @@ class NoteService {
     if (response.statusCode == 201) {
       return true;
     } else {
-      throw Exception("failed to create note");
+      return false;
     }
   }
 
   Future<bool> editNote(Note note) async {
-    final response = await http.put(Uri.parse("$baseUrl/posts/${note.id}"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(note.toJson()));
+    final response = await http.put(
+      Uri.parse("$baseUrl/posts/${note.id}"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(note.toJson()),
+    );
 
     if (response.statusCode == 200) {
       return true;
@@ -46,10 +48,10 @@ class NoteService {
   Future<bool> deleteNote(String id) async {
     final response = await http.delete(Uri.parse("$baseUrl/posts/$id"));
 
-    if (response.statusCode != 200) {
-      return false;
-    } else {
+    if (response.statusCode == 200) {
       return true;
+    } else {
+      return false;
     }
   }
 }

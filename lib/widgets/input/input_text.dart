@@ -40,6 +40,7 @@ class _InputTextState extends State<InputText> {
         SizedBox(height: 12),
         TextFormField(
           autofocus: widget.autoFocus,
+          autocorrect: false,
           enableSuggestions: false,
           controller: widget.controller,
           validator: widget.validate,

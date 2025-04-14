@@ -139,7 +139,7 @@ class _NoteFormState extends State<NoteForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: NoteFormHeader(
-        title: widget.option == "add" ? "Add Page" : "Edit Page",
+        title: widget.option == "add" ? "Add Note" : "Edit Note",
       ),
       body: SingleChildScrollView(
         child: Padding(
