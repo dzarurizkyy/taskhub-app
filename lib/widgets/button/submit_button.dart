@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taskhub_app/helpers/animation.dart';
 import '../notification/alert.dart';
 
 class SubmitButton extends StatefulWidget {
@@ -11,7 +10,7 @@ class SubmitButton extends StatefulWidget {
   final String failedMessage;
   final double successPadding;
   final double failedPadding;
-  final bool Function() validation;
+  final Future<bool> Function()? validation;
 
   const SubmitButton({
     super.key,
@@ -31,50 +30,31 @@ class SubmitButton extends StatefulWidget {
 }
 
 class _SubmitButtonState extends State<SubmitButton> {
-  void _showSnackBar(BuildContext context, bool isSuccess) {
-    final snackBar = SnackBar(
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.transparent,
-      duration: Duration(milliseconds: 900),
-      elevation: 0,
-      content: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: isSuccess ? widget.successPadding : widget.failedPadding,
-        ),
-        child: Alert(
-          icon: isSuccess ? Icons.done_rounded : Icons.error_rounded,
-          colorAlert: isSuccess
-              ? const Color.fromARGB(1000, 63, 125, 88)
-              : const Color.fromARGB(1000, 190, 49, 68),
-          message: isSuccess ? widget.successMessage : widget.failedMessage,
+  void _handleSubmit() async {
+    if (!widget.formkey.currentState!.validate()) return;
+    bool isValid = await widget.validation?.call() ?? false;
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        duration: const Duration(milliseconds: 1500),
+        elevation: 0,
+        content: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: isValid ? widget.successPadding : widget.failedPadding,
+          ),
+          child: Alert(
+            icon: isValid ? Icons.done_rounded : Icons.error_rounded,
+            colorAlert: isValid
+                ? const Color.fromARGB(1000, 63, 125, 88)
+                : const Color.fromARGB(1000, 190, 49, 68),
+            message: isValid ? widget.successMessage : widget.failedMessage,
+          ),
         ),
       ),
     );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  void _handleSubmit() async {
-    if (widget.formkey.currentState!.validate()) {
-      bool isValid = widget.validation();
-
-      if (isValid) {
-        _showSnackBar(context, true);
-        await Future.delayed(Duration(milliseconds: 950));
-        if (!mounted) return;
-
-        switch (widget.title) {
-          case "Continue":
-            Navigator.of(context).pushReplacement(loginTransition());
-          case "Add Note":
-            Navigator.of(context).pop(addNoteTransition());
-          case "Edit Note":
-            Navigator.of(context).pop(addNoteTransition());
-        }
-      } else {
-        _showSnackBar(context, false);
-      }
-    }
   }
 
   @override

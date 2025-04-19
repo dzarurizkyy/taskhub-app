@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:taskhub_app/pages/detail_note_page.dart';
-import 'package:taskhub_app/pages/edit_note_page.dart';
 import 'package:taskhub_app/pages/login_page.dart';
-import 'package:taskhub_app/pages/home_page.dart';
-import 'package:taskhub_app/pages/add_note_page.dart';
-import 'package:taskhub_app/pages/profile_page.dart';
-import 'package:taskhub_app/providers/note_provider.dart';
-import './providers/user_provider.dart';
+import 'package:taskhub_app/routes/routes.dart';
+
+final appRouter = AppRouter();
 
 class App extends StatelessWidget {
   final String flavor;
@@ -15,24 +10,15 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => UserProvider()),
-        ChangeNotifierProvider(create: (context) => NoteProvider())
+    return MaterialApp(
+      title: "TaskHub App",
+      onGenerateInitialRoutes: (initialRoute) => [
+        appRouter.generateRoute(
+          RouteSettings(name: LoginPage.routeName),
+        ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: "TaskHub App",
-        initialRoute: LoginPage.routeName,
-        routes: {
-          LoginPage.routeName: (ctx) => LoginPage(),
-          HomePage.routeName: (ctx) => HomePage(),
-          AddNotePage.routeName: (ctx) => AddNotePage(),
-          ProfilePage.routeName: (ctx) => ProfilePage(),
-          DetailNotePage.routeName: (ctx) => DetailNotePage(),
-          EditNotePage.routeName: (ctx) => EditNotePage(),
-        },
-      ),
+      onGenerateRoute: appRouter.generateRoute,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

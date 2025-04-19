@@ -3,14 +3,14 @@ import 'package:taskhub_app/pages/add_note_page.dart';
 import 'package:taskhub_app/pages/home_page.dart';
 import 'package:taskhub_app/pages/profile_page.dart';
 
-class BotttomNavigationBar extends StatefulWidget {
-  const BotttomNavigationBar({super.key});
+class BottomNavbar extends StatefulWidget {
+  const BottomNavbar({super.key});
 
   @override
-  State<BotttomNavigationBar> createState() => _BotttomNavigationBarState();
+  State<BottomNavbar> createState() => _BottomNavbarState();
 }
 
-class _BotttomNavigationBarState extends State<BotttomNavigationBar> {
+class _BottomNavbarState extends State<BottomNavbar> {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(

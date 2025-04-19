@@ -9,8 +9,8 @@ class UserProvider with ChangeNotifier {
       gender: "male",
       email: "dzarurizkybusiness@gmail.com",
       password: "dzaru1234",
-      createdAt: "2025-03-10 20:29:11",
-      updatedAt: "2025-03-10 20:29:11",
+      createdAt: DateTime.parse("2025-03-10"),
+      updatedAt: DateTime.parse("2025-03-10"),
     ),
     User(
       id: 2,
@@ -18,8 +18,8 @@ class UserProvider with ChangeNotifier {
       gender: "female",
       email: "yuukiasuna@yahoo.com",
       password: "asuna2024",
-      createdAt: "2025-03-10 22:00:00",
-      updatedAt: "2025-03-10 22:00:00",
+      createdAt: DateTime.parse("2025-03-10"),
+      updatedAt: DateTime.parse("2025-03-10"),
     )
   ];
 

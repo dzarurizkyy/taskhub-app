@@ -13,45 +13,39 @@ class NoteService {
       final List jsonData = jsonDecode(response.body);
       return jsonData.map((e) => Note.fromJson(e)).toList();
     } else {
-      throw Exception("failed to retrieve data");
+      throw Exception(response.body);
     }
   }
 
-  Future<bool> createNote(Note note) async {
+  Future<void> createNote(Note note) async {
     final response = await http.post(
       Uri.parse("$baseUrl/posts"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(note.toJson()),
     );
 
-    if (response.statusCode == 201) {
-      return true;
-    } else {
-      return false;
+    if (response.statusCode != 201) {
+      throw Exception(response.body);
     }
   }
 
-  Future<bool> editNote(Note note) async {
+  Future<void> editNote(Note note) async {
     final response = await http.put(
       Uri.parse("$baseUrl/posts/${note.id}"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(note.toJson()),
     );
 
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
+    if (response.statusCode != 200) {
+      throw Exception(response.body);
     }
   }
 
-  Future<bool> deleteNote(String id) async {
+  Future<void> deleteNote(String id) async {
     final response = await http.delete(Uri.parse("$baseUrl/posts/$id"));
 
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
+    if (response.statusCode != 200) {
+      throw Exception(response.body);
     }
   }
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animations/animations.dart';
+import 'package:taskhub_app/bloc/class/note_bloc.dart';
+import 'package:taskhub_app/bloc/state/note_state.dart';
 import 'package:taskhub_app/models/note.dart';
-import 'package:taskhub_app/providers/note_provider.dart';
 import 'package:taskhub_app/widgets/card/note_card.dart';
 
-class NoteTabbar extends StatefulWidget {
+class NoteTabbar extends StatelessWidget {
   final bool isSearch;
   final List<Note> notes;
   final int selectedTabIndex;
@@ -18,18 +19,13 @@ class NoteTabbar extends StatefulWidget {
   });
 
   @override
-  State<NoteTabbar> createState() => _NoteTabbarState();
-}
-
-class _NoteTabbarState extends State<NoteTabbar> {
-  @override
   Widget build(BuildContext context) {
-    return Consumer<NoteProvider>(
-      builder: (context, provider, child) {
+    return BlocBuilder<NoteBloc, NoteState>(
+      builder: (context, state) {
         return Padding(
           padding: EdgeInsets.symmetric(
             horizontal: 30,
-            vertical: widget.isSearch ? 5 : 20,
+            vertical: isSearch ? 5 : 20,
           ),
           child: PageTransitionSwitcher(
             transitionBuilder: (child, animation, secondaryAnimation) {
@@ -40,50 +36,59 @@ class _NoteTabbarState extends State<NoteTabbar> {
                 child: child,
               );
             },
-            child: _buildTabContent(provider, widget.isSearch),
+            child: _buildTabContent(state),
           ),
         );
       },
     );
   }
 
-  Widget _buildTabContent(NoteProvider provider, bool isSearch) {
-    if (isSearch) {
-      return _buildNoteList(widget.notes, "0");
-    } else {
-      switch (widget.selectedTabIndex) {
-        case 0:
-          return _buildNoteList(
-              provider.notes, widget.selectedTabIndex.toString());
-        case 1:
-          return _buildNoteList(provider.findByPriority("High"),
-              widget.selectedTabIndex.toString());
-        case 2:
-          return _buildNoteList(provider.findByPriority("Medium"),
-              widget.selectedTabIndex.toString());
-        case 3:
-          return _buildNoteList(provider.findByPriority("Low"),
-              widget.selectedTabIndex.toString());
-        default:
-          return Container();
-      }
-    }
-  }
+  Widget _buildTabContent(NoteState state) {
+    if (state is NoteLoaded) {
+      final notes = state.notes;
 
-  Widget _buildNoteList(List<Note> notes, String value) {
-    return ListView.separated(
-      key: ValueKey(value),
-      itemBuilder: (context, index) {
-        final note = notes[index];
-        return NoteCard(note: note);
-      },
-      separatorBuilder: (context, index) {
-        return Divider(
-          height: 12,
-          color: Color.fromRGBO(248, 244, 244, 1.0),
-        );
-      },
-      itemCount: notes.length,
-    );
+      if (isSearch) {
+        return _buildNoteList(notes, "0");
+      }
+
+      List<Note> filteredNotes;
+      switch (selectedTabIndex) {
+        case 0:
+          filteredNotes = notes;
+        case 1:
+          filteredNotes =
+              notes.where((note) => note.priority == "High").toList();
+          break;
+        case 2:
+          filteredNotes =
+              notes.where((note) => note.priority == "Medium").toList();
+          break;
+        case 3:
+          filteredNotes =
+              notes.where((note) => note.priority == "Low").toList();
+          break;
+        default:
+          filteredNotes = [];
+      }
+      return _buildNoteList(filteredNotes, selectedTabIndex.toString());
+    }
+    return Center(child: CircularProgressIndicator());
   }
+}
+
+Widget _buildNoteList(List<Note> notes, String value) {
+  return ListView.separated(
+    key: ValueKey(value),
+    itemBuilder: (context, index) {
+      final note = notes[index];
+      return NoteCard(note: note);
+    },
+    separatorBuilder: (context, index) {
+      return Divider(
+        height: 12,
+        color: Color.fromRGBO(248, 244, 244, 1.0),
+      );
+    },
+    itemCount: notes.length,
+  );
 }

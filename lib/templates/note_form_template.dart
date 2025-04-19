@@ -230,7 +230,10 @@ class _NoteFormState extends State<NoteForm> {
                                   : "Failed to edit note. Please try again",
                               successPadding: widget.option == "add" ? 40 : 30,
                               failedPadding: 30,
-                              validation: _attemptNote,
+                              validation: () async {
+                                _attemptNote;
+                                return true;
+                              },
                             ),
                           )
                         ],

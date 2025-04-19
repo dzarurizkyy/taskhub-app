@@ -1,51 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:taskhub_app/bloc/class/note_bloc.dart';
+import 'package:taskhub_app/bloc/event/note_event.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:taskhub_app/providers/note_provider.dart';
-import '../templates/home_template.dart';
+import 'package:taskhub_app/models/user.dart';
+import 'package:taskhub_app/templates/home_template.dart';
 
-class HomePage extends StatefulWidget {
-  static const routeName = "/home-page";
-
+class HomePage extends StatelessWidget {
+  static const routeName = "/home";
   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  late String name = "";
-  late String gender = "";
-
-  void _loadUserFromPrefs() async {
+  Future<User> _loadUserPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    String? namePrefs = prefs.getString("name");
-    String? genderPrefs = prefs.getString("gender");
-
-    if (namePrefs != null && genderPrefs != null) {
-      setState(() {
-        name = namePrefs;
-        gender = genderPrefs;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserFromPrefs();
-    Future.microtask(() {
-      if (!mounted) return;
-      Provider.of<NoteProvider>(context, listen: false).fetchNotes();
-    });
+    await Future.delayed(Duration(seconds: 1));
+    return User.prefs(
+      prefs.getString("name") ?? "",
+      prefs.getString("gender") ?? "",
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Home(
-      name: name,
-      gender: gender,
-      time: DateTime.now(),
+    Future.microtask(
+      () {
+        if (context.mounted) {
+          context.read<NoteBloc>().add(FetchNotes());
+        }
+      },
+    );
+
+    return FutureBuilder<User>(
+      future: _loadUserPrefs(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                color: const Color.fromARGB(1000, 32, 180, 224),
+              ),
+            ),
+            backgroundColor: const Color.fromRGBO(252, 250, 250, 1),
+          );
+        }
+        return Home(
+          name: snapshot.data!.name ?? "",
+          gender: snapshot.data!.gender ?? "",
+        );
+      },
     );
   }
 }

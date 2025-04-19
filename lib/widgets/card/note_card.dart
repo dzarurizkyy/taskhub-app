@@ -90,7 +90,7 @@ class NoteCard extends StatelessWidget {
                       ),
                       SizedBox(height: 2),
                       Text(
-                        DateFormat("HH:MM").format(note.date),
+                        DateFormat("HH:mm").format(note.date),
                         style: TextStyle(
                           fontSize: 11.5,
                           fontFamily: "Nunito",
