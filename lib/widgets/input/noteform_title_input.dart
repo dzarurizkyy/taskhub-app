@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-class InputDescription extends StatefulWidget {
+class TitleNoteFormInput extends StatefulWidget {
   final String title;
   final String hint;
   final TextEditingController controller;
 
-  const InputDescription({
+  const TitleNoteFormInput({
     super.key,
     required this.title,
     required this.hint,
-    required this.controller
+    required this.controller,
   });
 
   @override
-  State<InputDescription> createState() => _InputDescriptionState();
+  State<TitleNoteFormInput> createState() => _TitleNoteFormInputState();
 }
 
-class _InputDescriptionState extends State<InputDescription> {
+class _TitleNoteFormInputState extends State<TitleNoteFormInput> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -34,9 +34,6 @@ class _InputDescriptionState extends State<InputDescription> {
         ),
         SizedBox(height: 10),
         TextFormField(
-          minLines: 4,
-          maxLines: 4,
-          keyboardType: TextInputType.multiline,
           controller: widget.controller,
           style: TextStyle(
             fontSize: 13,
@@ -55,16 +52,12 @@ class _InputDescriptionState extends State<InputDescription> {
               color: Color.fromRGBO(158, 158, 158, 1.0),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
-                color: Color.fromRGBO(224, 224, 224, 1.0),
-              ),
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide(color: Color.fromRGBO(224, 224, 224, 1.0)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
-                color: Color.fromRGBO(224, 224, 224, 1.0),
-              ),
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide(color: Color.fromRGBO(224, 224, 224, 1.0)),
             ),
           ),
         )

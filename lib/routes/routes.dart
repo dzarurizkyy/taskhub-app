@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskhub_app/bloc/class/note_bloc.dart';
+import 'package:taskhub_app/bloc/class/note_screen_bloc.dart';
 import 'package:taskhub_app/bloc/class/user_bloc.dart';
+import 'package:taskhub_app/bloc/class/user_screen_bloc.dart';
 import 'package:taskhub_app/pages/add_note_page.dart';
 import 'package:taskhub_app/pages/detail_note_page.dart';
 import 'package:taskhub_app/pages/edit_note_page.dart';
 import 'package:taskhub_app/pages/home_page.dart';
 import 'package:taskhub_app/pages/login_page.dart';
-import 'package:taskhub_app/pages/profile_page.dart';
+import 'package:taskhub_app/pages/edit_profile_page.dart';
 
 class AppRouter {
   final NoteBloc note = NoteBloc();
   final UserBloc user = UserBloc();
+  final UserScreenBloc userSceen =
+      UserScreenBloc(initialGender: "male", initialVisible: true);
+  final NoteScreenBloc noteScreen =
+      NoteScreenBloc(initialPriority: "High", initialButtonStatus: false);
 
   Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -39,24 +45,33 @@ class AppRouter {
         );
       case AddNotePage.routeName:
         return MaterialPageRoute(
-          builder: (context) => BlocProvider.value(
-            value: note,
+          builder: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: note),
+              BlocProvider.value(value: noteScreen)
+            ],
             child: AddNotePage(),
           ),
         );
       case EditNotePage.routeName:
         return MaterialPageRoute(
           settings: settings,
-          builder: (context) => BlocProvider.value(
-            value: note,
+          builder: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: note),
+              BlocProvider.value(value: noteScreen)
+            ],
             child: EditNotePage(),
           ),
         );
-      case ProfilePage.routeName:
+      case EditProfilePage.routeName:
         return MaterialPageRoute(
-          builder: (context) => BlocProvider.value(
-            value: user,
-            child: ProfilePage(),
+          builder: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: user),
+              BlocProvider.value(value: userSceen)
+            ],
+            child: EditProfilePage(),
           ),
         );
       default:

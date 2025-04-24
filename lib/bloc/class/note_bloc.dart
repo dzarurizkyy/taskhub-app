@@ -27,7 +27,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       emit(NoteLoaded(notes));
     } catch (e) {
       debugPrint("failed to fetch notes: $e");
-      emit(NoteError("Failed to fetch notes. Please try again."));
+      emit(NoteError("Failed to fetch notes. Please try again. $e"));
     }
   }
 

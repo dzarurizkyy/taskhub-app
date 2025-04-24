@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class InputDate extends StatefulWidget {
+class DateNoteformInput extends StatefulWidget {
   final String title;
   final String hint;
   final TextEditingController controller;
   final VoidCallback picker;
 
-  const InputDate({
+  const DateNoteformInput({
     super.key,
     required this.title,
     required this.hint,
@@ -15,10 +15,10 @@ class InputDate extends StatefulWidget {
   });
 
   @override
-  State<InputDate> createState() => _InputDateState();
+  State<DateNoteformInput> createState() => _DateNoteformInputState();
 }
 
-class _InputDateState extends State<InputDate> {
+class _DateNoteformInputState extends State<DateNoteformInput> {
   @override
   Widget build(BuildContext context) {
     return Expanded(

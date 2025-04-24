@@ -55,7 +55,7 @@ class _HomePageHeaderState extends State<HomePageHeader> {
                       ),
                     ),
                     Text(
-                      capitalizeText(widget.name),
+                      capitalizeText(widget.name, "nickname"),
                       style: TextStyle(
                         fontSize: 26,
                         fontFamily: "Nunito",

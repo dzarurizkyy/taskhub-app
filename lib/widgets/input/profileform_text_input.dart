@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
 
-class InputTitle extends StatefulWidget {
+class TextProfileFormInput extends StatelessWidget {
   final String title;
-  final String hint;
   final TextEditingController controller;
 
-  const InputTitle({
+  const TextProfileFormInput({
     super.key,
     required this.title,
-    required this.hint,
     required this.controller,
   });
 
-  @override
-  State<InputTitle> createState() => _InputTitleState();
-}
-
-class _InputTitleState extends State<InputTitle> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -24,43 +17,36 @@ class _InputTitleState extends State<InputTitle> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.title,
+          title,
           style: TextStyle(
-            fontSize: 13,
+            fontSize: 14,
             fontFamily: "Nunito",
             fontWeight: FontWeight.w600,
-            color: Color.fromRGBO(113, 114, 118, 1.0),
           ),
         ),
         SizedBox(height: 10),
         TextFormField(
-          controller: widget.controller,
+          controller: controller,
           style: TextStyle(
-            fontSize: 13,
+            fontSize: 15,
             fontFamily: "Nunito",
             fontWeight: FontWeight.w500,
-            color: Color.fromRGBO(0, 0, 0, 1.0),
+            color: Color.fromRGBO(0, 0, 0, 0.8),
           ),
           decoration: InputDecoration(
-            isDense: true,
-            contentPadding: EdgeInsets.all(15),
-            hintText: widget.hint,
-            hintStyle: TextStyle(
-              fontSize: 13,
-              fontFamily: "Nunito",
-              fontWeight: FontWeight.w500,
-              color: Color.fromRGBO(158, 158, 158, 1.0),
-            ),
+            filled: true,
+            fillColor: const Color.fromRGBO(158, 158, 158, 0.20),
+            contentPadding: EdgeInsets.only(left: 20, bottom: 30),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: Color.fromRGBO(224, 224, 224, 1.0)),
+              borderSide: BorderSide(color: Colors.transparent),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: Color.fromRGBO(224, 224, 224, 1.0)),
+              borderSide: BorderSide(color: Colors.transparent),
             ),
           ),
-        )
+        ),
       ],
     );
   }

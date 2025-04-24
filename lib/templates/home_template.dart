@@ -90,6 +90,10 @@ class Home extends StatelessWidget {
               );
             },
           );
+        } else if (state is NoteError) {
+          return SizedBox(
+            child: Text(state.message),
+          );
         }
         return Container();
       },

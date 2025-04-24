@@ -1,3 +1,5 @@
+import 'package:taskhub_app/models/user.dart';
+
 abstract class UserEvent {}
 
 class UpdateFormStatus extends UserEvent {
@@ -12,4 +14,10 @@ class LoginUser extends UserEvent {
   final String password;
 
   LoginUser(this.email, this.password);
+}
+
+class UpdateProfile extends UserEvent {
+  final User user;
+
+  UpdateProfile(this.user);
 }

@@ -8,8 +8,8 @@ import 'package:taskhub_app/helpers/validation.dart';
 import 'package:taskhub_app/pages/home_page.dart';
 import 'package:taskhub_app/widgets/button/submit_button.dart';
 import 'package:taskhub_app/widgets/header/login_page_header.dart';
-import 'package:taskhub_app/widgets/input/input_password.dart';
-import 'package:taskhub_app/widgets/input/input_text.dart';
+import 'package:taskhub_app/widgets/input/auth_password_input.dart';
+import 'package:taskhub_app/widgets/input/auth_email_input.dart';
 
 class Login extends StatelessWidget {
   final Future<bool> Function(BuildContext, String, String) attemptLogin;
@@ -46,7 +46,7 @@ class Login extends StatelessWidget {
                 key: formKey,
                 child: Column(
                   children: [
-                    InputText(
+                    EmailAuthInput(
                       autoFocus: true,
                       title: "Your email address",
                       hintText: "username@gmail.com",
@@ -55,7 +55,7 @@ class Login extends StatelessWidget {
                       validate: validateEmail,
                     ),
                     const SizedBox(height: 15),
-                    InputPassword(
+                    PasswordAuthInput(
                       title: "Choose a password",
                       hintText: "min. 6 characters",
                       fillColor: Color.fromRGBO(255, 255, 255, 1.0),
@@ -66,7 +66,7 @@ class Login extends StatelessWidget {
                     BlocBuilder<UserBloc, UserState>(
                       builder: (context, state) {
                         bool isButtonEnabled = false;
-                        
+
                         if (state is FormStatusUpdated) {
                           isButtonEnabled = state.isFormValid;
                         }

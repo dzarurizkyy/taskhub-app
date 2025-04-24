@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taskhub_app/pages/add_note_page.dart';
 import 'package:taskhub_app/pages/home_page.dart';
-import 'package:taskhub_app/pages/profile_page.dart';
+import 'package:taskhub_app/pages/edit_profile_page.dart';
 
 class BottomNavbar extends StatefulWidget {
   const BottomNavbar({super.key});
@@ -28,21 +28,8 @@ class _BottomNavbarState extends State<BottomNavbar> {
                 borderRadius: BorderRadius.circular(30),
                 splashColor: Colors.black12,
                 onTap: () {
-                  Navigator.of(context).push(
-                    PageRouteBuilder(
-                      transitionDuration: Duration(milliseconds: 200),
-                      pageBuilder: (context, animation, secondaryAnimation) {
-                        return HomePage();
-                      },
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-                      },
-                    ),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(HomePage.routeName);
                 },
                 child: Padding(
                   padding: EdgeInsets.all(15),
@@ -56,27 +43,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).push(
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) {
-                      return AddNotePage();
-                    },
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      return SlideTransition(
-                        position: animation.drive(
-                          Tween<Offset>(
-                            begin: Offset(0, 1),
-                            end: Offset.zero,
-                          ).chain(
-                            CurveTween(curve: Curves.linearToEaseOut),
-                          ),
-                        ),
-                        child: child,
-                      );
-                    },
-                  ),
-                );
+                Navigator.of(context).pushNamed(AddNotePage.routeName);
               },
               child: Container(
                 width: 55,
@@ -98,21 +65,8 @@ class _BottomNavbarState extends State<BottomNavbar> {
                 borderRadius: BorderRadius.circular(30),
                 splashColor: Colors.black12,
                 onTap: () {
-                  Navigator.of(context).push(
-                    PageRouteBuilder(
-                      transitionDuration: Duration(milliseconds: 200),
-                      pageBuilder: (context, animation, secondaryAnimation) {
-                        return ProfilePage();
-                      },
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-                      },
-                    ),
-                  );
+                  Navigator.of(context)
+                      .pushReplacementNamed(EditProfilePage.routeName);
                 },
                 child: Padding(
                   padding: EdgeInsets.all(15),

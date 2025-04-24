@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
-class InputText extends StatefulWidget {
-  final bool autoFocus;
+class PasswordAuthInput extends StatefulWidget {
   final String title;
   final String hintText;
   final Color fillColor;
   final TextEditingController controller;
   final String? Function(String?) validate;
 
-  const InputText({
+  const PasswordAuthInput({
     super.key,
-    required this.autoFocus,
     required this.title,
     required this.hintText,
     required this.fillColor,
@@ -19,10 +17,12 @@ class InputText extends StatefulWidget {
   });
 
   @override
-  State<InputText> createState() => _InputTextState();
+  State<PasswordAuthInput> createState() => _PasswordAuthInputState();
 }
 
-class _InputTextState extends State<InputText> {
+class _PasswordAuthInputState extends State<PasswordAuthInput> {
+  late bool isObscure = false;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -39,12 +39,11 @@ class _InputTextState extends State<InputText> {
         ),
         SizedBox(height: 12),
         TextFormField(
-          autofocus: widget.autoFocus,
           autocorrect: false,
           enableSuggestions: false,
-          controller: widget.controller,
           validator: widget.validate,
-          keyboardType: TextInputType.emailAddress,
+          controller: widget.controller,
+          obscureText: isObscure,
           style: TextStyle(
             color: Color.fromARGB(1000, 0, 0, 0),
             fontFamily: "Nunito",
@@ -52,19 +51,42 @@ class _InputTextState extends State<InputText> {
             fontSize: 14,
           ),
           decoration: InputDecoration(
+            hintText: widget.hintText,
+            hintStyle: TextStyle(
+              fontSize: 14,
+              fontFamily: "Nunito",
+              fontWeight: FontWeight.w500,
+              color: Colors.grey,
+            ),
             filled: true,
             fillColor: widget.fillColor,
             contentPadding: EdgeInsets.symmetric(horizontal: 20),
-            hintText: widget.hintText,
-            hintStyle: TextStyle(
-              color: Colors.grey,
-              fontFamily: "Nunito",
-              fontWeight: FontWeight.w500,
-              fontSize: 14,
+            suffixIcon: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(10),
+                splashColor: Colors.transparent,
+                onTap: () {
+                  setState(() {
+                    isObscure = !isObscure;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: Icon(
+                    isObscure ? Icons.visibility_off : Icons.visibility,
+                    color: isObscure
+                        ? Colors.grey.shade300
+                        : Color.fromARGB(255, 0, 2, 0),
+                  ),
+                ),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide(
+                color: Colors.grey.shade300,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
@@ -88,7 +110,7 @@ class _InputTextState extends State<InputText> {
             ),
             errorStyle: TextStyle(height: 2),
           ),
-        ),
+        )
       ],
     );
   }

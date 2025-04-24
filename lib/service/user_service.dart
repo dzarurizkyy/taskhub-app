@@ -8,7 +8,7 @@ class UserService {
       gender: "male",
       email: "dzarurizkybusiness@gmail.com",
       password: "dzaru1234",
-      createdAt:  DateTime.parse("2025-03-10"),
+      createdAt: DateTime.parse("2025-03-10"),
       updatedAt: DateTime.parse("2025-03-10"),
     ),
     User(
@@ -33,5 +33,26 @@ class UserService {
     }
 
     return user;
+  }
+
+  Future<User> updateUserProfile(User user) async{
+    final int selectedUser = _users.indexWhere((data) => data.id == user.id);
+
+    if (user.id == 0) {
+      throw Exception("user not found");
+    }
+
+    final currentUser = _users[selectedUser];
+    final User updatedUser = User(
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      gender: user.gender,
+      password: user.password,
+      createdAt: currentUser.createdAt,
+      updatedAt: DateTime.now(),
+    );
+
+    return updatedUser;
   }
 }
