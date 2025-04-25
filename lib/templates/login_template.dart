@@ -91,10 +91,8 @@ class Login extends StatelessWidget {
                                 );
                                 if (success) {
                                   if (context.mounted) {
-                                    if (context.mounted) {
-                                      Navigator.of(context)
-                                          .pushNamed(HomePage.routeName);
-                                    }
+                                    Navigator.of(context)
+                                        .pushNamed(HomePage.routeName);
                                   }
                                   return true;
                                 } else {

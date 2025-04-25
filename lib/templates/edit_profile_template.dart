@@ -68,129 +68,132 @@ class EditProfileTemplate extends StatelessWidget {
                 passwordController.text = user.password ?? "";
               },
             );
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ProfileAvatar(gender: user.gender ?? "male"),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
-                  child: Form(
-                    key: formKey,
-                    child: Wrap(
-                      runSpacing: 15,
-                      children: [
-                        TextProfileFormInput(
-                          title: "Name",
-                          controller: nameController,
-                        ),
-                        TextProfileFormInput(
-                          title: "Email",
-                          controller: emailController,
-                        ),
-                        BlocBuilder<UserScreenBloc, UserScreenState>(
-                          builder: (context, screenState) {
-                            gender = state.user.gender ?? "";
-                            if (screenState is UserScreenLoaded) {
-                              gender = screenState.gender;
-                            }
-                            return GenderProfileFormInput(
-                              title: "Gender",
-                              list: ["male", "female"],
-                              initialValue: gender,
-                              onChanged: (value) {
-                                context
-                                    .read<UserScreenBloc>()
-                                    .add(ChangeGender(value!));
-                              },
-                            );
-                          },
-                        ),
-                        BlocBuilder<UserScreenBloc, UserScreenState>(
-                          builder: (context, screenState) {
-                            bool isVisible = true;
-                            if (screenState is UserScreenLoaded) {
-                              isVisible = screenState.isVisible;
-                            }
-                            return PasswordProfileFormInput(
-                              title: "Password",
-                              isVisible: isVisible,
-                              controller: passwordController,
-                              onTap: () {
-                                context.read<UserScreenBloc>().add(
-                                      ChangeVisiblePassword(
-                                        !isVisible,
-                                      ),
-                                    );
-                              },
-                            );
-                          },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 14, bottom: 18),
-                          child: EditProfileButton(
-                            title: "Save Changes",
-                            onPressed: () async {
-                              final failedSnackbar = _buildEditStatus(
-                                "failed",
-                                nameController,
-                                emailController,
-                                passwordController,
-                              );
-
-                              if (failedSnackbar != null) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(failedSnackbar);
-                              } else {
-                                final bool isSuccess = await updateProfile(
-                                  context,
-                                  user.id,
-                                  nameController.text,
-                                  emailController.text,
-                                  gender,
-                                  passwordController.text,
-                                );
-                                if (isSuccess) {
-                                  if (!context.mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    _buildEditStatus(
-                                      "success",
-                                      nameController,
-                                      emailController,
-                                      passwordController,
-                                    )!,
-                                  );
-                                }
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ProfileAvatar(gender: user.gender ?? "male"),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 25, vertical: 30),
+                    child: Form(
+                      key: formKey,
+                      child: Wrap(
+                        runSpacing: 15,
+                        children: [
+                          TextProfileFormInput(
+                            title: "Name",
+                            controller: nameController,
+                          ),
+                          TextProfileFormInput(
+                            title: "Email",
+                            controller: emailController,
+                          ),
+                          BlocBuilder<UserScreenBloc, UserScreenState>(
+                            builder: (context, screenState) {
+                              gender = state.user.gender ?? "";
+                              if (screenState is UserScreenLoaded) {
+                                gender = screenState.gender;
                               }
+                              return GenderProfileFormInput(
+                                title: "Gender",
+                                list: ["male", "female"],
+                                initialValue: gender,
+                                onChanged: (value) {
+                                  context
+                                      .read<UserScreenBloc>()
+                                      .add(ChangeGender(value!));
+                                },
+                              );
                             },
                           ),
-                        ),
-                        Center(
-                            child: InkWell(
-                          onTap: () async {
-                            final prefs = await SharedPreferences.getInstance();
-                            await prefs.clear();
-                            if (!context.mounted) return;
-                            Navigator.of(context)
-                                .pushReplacementNamed(LoginPage.routeName);
-                          },
-                          child: Text(
-                            "Log Out",
-                            style: TextStyle(
-                              fontFamily: "Nunito",
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              color: const Color.fromARGB(1000, 32, 180, 224),
+                          BlocBuilder<UserScreenBloc, UserScreenState>(
+                            builder: (context, screenState) {
+                              bool isVisible = true;
+                              if (screenState is UserScreenLoaded) {
+                                isVisible = screenState.isVisible;
+                              }
+                              return PasswordProfileFormInput(
+                                title: "Password",
+                                isVisible: isVisible,
+                                controller: passwordController,
+                                onTap: () {
+                                  context.read<UserScreenBloc>().add(
+                                        ChangeVisiblePassword(
+                                          !isVisible,
+                                        ),
+                                      );
+                                },
+                              );
+                            },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 14, bottom: 18),
+                            child: EditProfileButton(
+                              title: "Save Changes",
+                              onPressed: () async {
+                                final failedSnackbar = _buildEditStatus(
+                                  "failed",
+                                  nameController,
+                                  emailController,
+                                  passwordController,
+                                );
+
+                                if (failedSnackbar != null) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(failedSnackbar);
+                                } else {
+                                  final bool isSuccess = await updateProfile(
+                                    context,
+                                    user.id,
+                                    nameController.text,
+                                    emailController.text,
+                                    gender,
+                                    passwordController.text,
+                                  );
+                                  if (isSuccess) {
+                                    if (!context.mounted) return;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      _buildEditStatus(
+                                        "success",
+                                        nameController,
+                                        emailController,
+                                        passwordController,
+                                      )!,
+                                    );
+                                  }
+                                }
+                              },
                             ),
                           ),
-                        ))
-                      ],
+                          Center(
+                              child: InkWell(
+                            onTap: () async {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.clear();
+                              if (!context.mounted) return;
+                              Navigator.of(context)
+                                  .pushReplacementNamed(LoginPage.routeName);
+                            },
+                            child: Text(
+                              "Log Out",
+                              style: TextStyle(
+                                fontFamily: "Nunito",
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: const Color.fromARGB(1000, 32, 180, 224),
+                              ),
+                            ),
+                          ))
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             );
           } else {
             return Container();
@@ -221,7 +224,7 @@ SnackBar? _buildEditStatus(
       padding = 30;
     } else if (isEmailValid != null || isPasswordValid != null) {
       message = "${isEmailValid ?? isPasswordValid}";
-      padding = isPasswordValid != null ? 15 : 25;
+      padding = isPasswordValid != null ? 5 : 40;
     } else if (isEmailValid == null && isPasswordValid == null) {
       return null;
     }
@@ -247,13 +250,10 @@ SnackBar? _buildEditStatus(
     backgroundColor: Colors.transparent,
     duration: const Duration(milliseconds: 800),
     elevation: 0,
-    content: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Alert(
-        icon: Icons.done_rounded,
-        colorAlert: Color.fromRGBO(63, 125, 88, 1.0),
-        message: "Your profile has been successfully updated",
-      ),
+    content: Alert(
+      icon: Icons.done_rounded,
+      colorAlert: Color.fromRGBO(63, 125, 88, 1.0),
+      message: "Your profile has been successfully updated",
     ),
   );
 }

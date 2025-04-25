@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
 import 'package:taskhub_app/bloc/event/note_event.dart';
 import 'package:taskhub_app/bloc/state/note_state.dart';
 import 'package:taskhub_app/models/note.dart';
@@ -26,7 +25,6 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       final notes = await _noteService.fetchNote();
       emit(NoteLoaded(notes));
     } catch (e) {
-      debugPrint("failed to fetch notes: $e");
       emit(NoteError("Failed to fetch notes. Please try again. $e"));
     }
   }
@@ -50,7 +48,6 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
         await _noteService.createNote(newNote);
         emit(NoteLoaded([...currentState.notes, newNote]));
       } catch (e) {
-        debugPrint("failed to create note: $e");
         emit(NoteError("Failed to take notes. Please try again."));
       }
     }
@@ -92,7 +89,6 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
           updatedList[index] = updatedNote;
           emit(NoteLoaded(updatedList));
         } catch (e) {
-          debugPrint("failed to edit note: $e");
           emit(NoteError("Failed to edit the note. Please try again."));
         }
       }
@@ -117,7 +113,6 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
           updatedList[index] = updatedNote;
           emit(NoteLoaded(updatedList));
         } catch (e) {
-          debugPrint("failed to update note: $e");
           emit(NoteError("Failed to update the note. Please try again."));
         }
       }
@@ -136,7 +131,6 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
           ),
         );
       } catch (e) {
-        debugPrint("failed to delete note: $e");
         emit(NoteError("Failed to delete note. Please try again."));
       }
     }

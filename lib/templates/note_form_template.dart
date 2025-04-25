@@ -245,29 +245,26 @@ class NoteForm extends StatelessWidget {
                             width: double.infinity,
                             child: BlocBuilder<NoteScreenBloc, NoteScreenState>(
                               builder: (context, state) {
-                                bool isButtonEnabled = false;
-
                                 if (state is NoteScreenLoaded) {
-                                  isButtonEnabled = state.buttonStatus;
+                                  return SubmitButton(
+                                    formkey: _formKey,
+                                    title: isEdit ? "Edit Note" : "Add Note",
+                                    titleBold: FontWeight.w800,
+                                    isButtonEnabled: state.buttonStatus,
+                                    successMessage: isEdit
+                                        ? "Your note has been updated"
+                                        : "Your note has been saved",
+                                    failedMessage: isEdit
+                                        ? "Failed to edit note. Please try again"
+                                        : "Failed to add note. Please try again",
+                                    successPadding: isEdit ? 30 : 40,
+                                    failedPadding: 30,
+                                    validation: () async {
+                                      return _submit(context);
+                                    },
+                                  );
                                 }
-
-                                return SubmitButton(
-                                  formkey: _formKey,
-                                  title: isEdit ? "Edit Note" : "Add Note",
-                                  titleBold: FontWeight.w800,
-                                  isButtonEnabled: isButtonEnabled,
-                                  successMessage: isEdit
-                                      ? "Your note has been updated"
-                                      : "Your note has been saved",
-                                  failedMessage: isEdit
-                                      ? "Failed to edit note. Please try again"
-                                      : "Failed to add note. Please try again",
-                                  successPadding: isEdit ? 30 : 40,
-                                  failedPadding: 30,
-                                  validation: () async {
-                                    return _submit(context);
-                                  },
-                                );
+                                return SizedBox();
                               },
                             ),
                           )

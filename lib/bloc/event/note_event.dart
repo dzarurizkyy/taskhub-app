@@ -1,11 +1,4 @@
-import 'package:equatable/equatable.dart';
-
-abstract class NoteEvent extends Equatable {
-  const NoteEvent();
-
-  @override
-  List<Object?> get props => [];
-}
+abstract class NoteEvent {}
 
 class FetchNotes extends NoteEvent {}
 
@@ -14,10 +7,8 @@ class AddNote extends NoteEvent {
   final String description;
   final DateTime date;
   final String priority;
-  const AddNote(this.title, this.description, this.date, this.priority);
 
-  @override
-  List<Object> get props => [title, description, date, priority];
+  AddNote(this.title, this.description, this.date, this.priority);
 }
 
 class EditNote extends NoteEvent {
@@ -30,7 +21,7 @@ class EditNote extends NoteEvent {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  const EditNote(
+  EditNote(
     this.id,
     this.title,
     this.description,
@@ -40,32 +31,19 @@ class EditNote extends NoteEvent {
     this.createdAt,
     this.updatedAt,
   );
-
-  @override
-  List<Object> get props =>
-      [id, title, description, date, priority, section, createdAt, updatedAt];
 }
 
 class SearchNote extends NoteEvent {
   final String title;
-  const SearchNote(this.title);
-
-  @override
-  List<Object> get props => [title];
+ SearchNote(this.title);
 }
 
 class DeleteNote extends NoteEvent {
   final String id;
-  const DeleteNote(this.id);
-  
-  @override
-  List<Object> get props => [id];
+  DeleteNote(this.id);
 }
 
 class UpdateNote extends NoteEvent {
   final String id;
-  const UpdateNote(this.id);
-
-  @override
-  List<Object> get props => [id];
+  UpdateNote(this.id);
 }
