@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "7483451972",
+    "project_id": "taskhub-app-a2e81",
+    "storage_bucket": "taskhub-app-a2e81.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:7483451972:android:6fd827122f8b3e0db4ea11",
+        "android_client_info": {
+          "package_name": "com.luarsekolah.taskhub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBm7LC1Ff0GmgVfmHZnzCcgP00EM8kSvBY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

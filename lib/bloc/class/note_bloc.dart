@@ -3,11 +3,9 @@ import 'package:taskhub_app/bloc/event/note_event.dart';
 import 'package:taskhub_app/bloc/state/note_state.dart';
 import 'package:taskhub_app/models/note.dart';
 import 'package:taskhub_app/service/note_service.dart';
-import 'package:uuid/uuid.dart';
 
 class NoteBloc extends Bloc<NoteEvent, NoteState> {
   final NoteService _noteService = NoteService();
-  final Uuid _uuid = Uuid();
 
   NoteBloc() : super(NoteInitial()) {
     on<FetchNotes>(_onFetchNotes);
@@ -33,8 +31,8 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     final currentState = state;
 
     if (currentState is NoteLoaded) {
-      final newNote = Note(
-        id: _uuid.v4(),
+      final tempNote = Note(
+        id: "",
         title: event.title,
         description: event.description,
         date: event.date,
@@ -45,8 +43,14 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       );
 
       try {
-        await _noteService.createNote(newNote);
-        emit(NoteLoaded([...currentState.notes, newNote]));
+        final docId = await _noteService.createNote(tempNote);
+
+        if (docId != null) {
+          final newNote = tempNote.copyWith(id: docId);
+          emit(NoteLoaded([...currentState.notes, newNote]));
+        } else {
+          emit(NoteError("Failed to create notes. Please try again."));
+        }
       } catch (e) {
         emit(NoteError("Failed to take notes. Please try again."));
       }

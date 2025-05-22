@@ -1,51 +1,64 @@
-import 'dart:convert';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:taskhub_app/models/note.dart';
-import 'package:http/http.dart' as http;
 
 class NoteService {
-  final String baseUrl = "https://jsonplaceholder.typicode.com";
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<List<Note>> fetchNote() async {
-    final response = await http.get(Uri.parse("$baseUrl/posts"));
+    CollectionReference notes = firestore.collection("note");
+    final snapshot = await notes.get();
+    return snapshot.docs.map((doc) => Note.fromFirestore(doc)).toList();
+  }
 
-    if (response.statusCode == 200) {
-      final List jsonData = jsonDecode(response.body);
-      return jsonData.map((e) => Note.fromJson(e)).toList();
-    } else {
-      throw Exception(response.body);
+  Future<DocumentSnapshot<Object?>> fetchNoteById(String id) async {
+    DocumentReference docData = firestore.collection("note").doc(id);
+    return docData.get();
+  }
+
+  Future<String?> createNote(Note req) async {
+    CollectionReference note = firestore.collection("note");
+
+    try {
+      DocumentReference docRef = await note.add({
+        "title": req.title,
+        "description": req.description,
+        "date": req.date,
+        "priority": req.priority,
+        "section": req.section,
+        "created_at": DateTime.now(),
+        "updated_at": DateTime.now(),
+      });
+      return docRef.id;
+    } catch (e) {
+      return null;
     }
   }
 
-  Future<void> createNote(Note note) async {
-    final response = await http.post(
-      Uri.parse("$baseUrl/posts"),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(note.toJson()),
-    );
+  Future<bool> editNote(Note req) async {
+    DocumentReference note = firestore.collection("note").doc(req.id);
 
-    if (response.statusCode != 201) {
-      throw Exception(response.body);
+    try {
+      await note.update({
+        "title": req.title,
+        "description": req.description,
+        "date": req.date,
+        "priority": req.priority,
+        "section": req.section,
+        "updated_at": DateTime.now()
+      });
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
-  Future<void> editNote(Note note) async {
-    final response = await http.put(
-      Uri.parse("$baseUrl/posts/${note.id}"),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(note.toJson()),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception(response.body);
-    }
-  }
-
-  Future<void> deleteNote(String id) async {
-    final response = await http.delete(Uri.parse("$baseUrl/posts/$id"));
-
-    if (response.statusCode != 200) {
-      throw Exception(response.body);
+  Future<bool> deleteNote(String id) async {
+    DocumentReference docRef = firestore.collection("note").doc(id);
+    try {
+      await docRef.delete();
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

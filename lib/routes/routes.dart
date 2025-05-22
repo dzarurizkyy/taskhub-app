@@ -10,6 +10,7 @@ import 'package:taskhub_app/pages/edit_note_page.dart';
 import 'package:taskhub_app/pages/home_page.dart';
 import 'package:taskhub_app/pages/login_page.dart';
 import 'package:taskhub_app/pages/edit_profile_page.dart';
+import 'package:taskhub_app/pages/registration_page.dart';
 
 class AppRouter {
   final NoteBloc note = NoteBloc();
@@ -21,6 +22,13 @@ class AppRouter {
 
   Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case RegistrationPage.routeName:
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: user,
+            child: RegistrationPage(),
+          ),
+        );
       case LoginPage.routeName:
         return MaterialPageRoute(
           builder: (context) => BlocProvider.value(

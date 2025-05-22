@@ -35,7 +35,7 @@ class EditNote extends NoteEvent {
 
 class SearchNote extends NoteEvent {
   final String title;
- SearchNote(this.title);
+  SearchNote(this.title);
 }
 
 class DeleteNote extends NoteEvent {

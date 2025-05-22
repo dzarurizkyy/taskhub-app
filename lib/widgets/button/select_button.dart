@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SelectButton extends StatefulWidget {
+  final String type;
   final String title;
   final List<String> choice;
   final String priority;
@@ -8,6 +9,7 @@ class SelectButton extends StatefulWidget {
 
   const SelectButton({
     super.key,
+    required this.type,
     required this.title,
     required this.choice,
     required this.priority,
@@ -21,15 +23,19 @@ class SelectButton extends StatefulWidget {
 class _SelectButtonState extends State<SelectButton> {
   @override
   Widget build(BuildContext context) {
-    int getIndex(String option) {
-      return option == "Low"
-          ? 2
-          : option == "Medium"
-              ? 1
-              : 0;
+    int getIndex(String option, String type) {
+      if (type == "note_form") {
+        return option == "Low"
+            ? 2
+            : option == "Medium"
+                ? 1
+                : 0;
+      }
+
+      return option == "Male" ? 0 : 1;
     }
 
-    int selectedIndex = getIndex(widget.priority);
+    int selectedIndex = getIndex(widget.priority, widget.type);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

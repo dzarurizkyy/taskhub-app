@@ -226,6 +226,7 @@ class NoteForm extends StatelessWidget {
                             builder: (context, state) {
                               if (state is NoteScreenLoaded) {
                                 return SelectButton(
+                                  type: "note_form",
                                   title: "Priority",
                                   choice: _priorities,
                                   priority: state.priority,

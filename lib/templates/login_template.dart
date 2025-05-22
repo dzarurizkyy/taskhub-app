@@ -6,6 +6,7 @@ import 'package:taskhub_app/bloc/event/user_event.dart';
 import 'package:taskhub_app/bloc/state/user_state.dart';
 import 'package:taskhub_app/helpers/validation.dart';
 import 'package:taskhub_app/pages/home_page.dart';
+import 'package:taskhub_app/pages/registration_page.dart';
 import 'package:taskhub_app/widgets/button/submit_button.dart';
 import 'package:taskhub_app/widgets/header/login_page_header.dart';
 import 'package:taskhub_app/widgets/input/auth_password_input.dart';
@@ -111,6 +112,34 @@ class Login extends StatelessWidget {
                           ),
                         );
                       },
+                    ),
+                    const SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account? ",
+                          style: TextStyle(
+                            fontFamily: "Nunito",
+                            fontWeight: FontWeight.w700,
+                            color: Color.fromRGBO(203, 203, 203, 1),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushReplacementNamed(
+                                context, RegistrationPage.routeName);
+                          },
+                          child: Text(
+                            "Register",
+                            style: TextStyle(
+                              fontFamily: "Nunito",
+                              fontWeight: FontWeight.w700,
+                              color: Color.fromRGBO(4, 164, 220, 0.6),
+                            ),
+                          ),
+                        )
+                      ],
                     )
                   ],
                 ),

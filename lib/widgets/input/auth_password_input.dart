@@ -21,7 +21,7 @@ class PasswordAuthInput extends StatefulWidget {
 }
 
 class _PasswordAuthInputState extends State<PasswordAuthInput> {
-  late bool isObscure = false;
+  late bool isObscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class _PasswordAuthInputState extends State<PasswordAuthInput> {
             ),
             filled: true,
             fillColor: widget.fillColor,
-            contentPadding: EdgeInsets.symmetric(horizontal: 20),
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             suffixIcon: Material(
               color: Colors.transparent,
               child: InkWell(
@@ -75,9 +75,7 @@ class _PasswordAuthInputState extends State<PasswordAuthInput> {
                   padding: const EdgeInsets.only(right: 6),
                   child: Icon(
                     isObscure ? Icons.visibility_off : Icons.visibility,
-                    color: isObscure
-                        ? Colors.grey.shade300
-                        : Color.fromARGB(255, 0, 2, 0),
+                    color: Color.fromARGB(255, 0, 2, 0),
                   ),
                 ),
               ),

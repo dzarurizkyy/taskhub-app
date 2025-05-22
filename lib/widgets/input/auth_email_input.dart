@@ -54,7 +54,7 @@ class _EmailAuthInputState extends State<EmailAuthInput> {
           decoration: InputDecoration(
             filled: true,
             fillColor: widget.fillColor,
-            contentPadding: EdgeInsets.symmetric(horizontal: 20),
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             hintText: widget.hintText,
             hintStyle: TextStyle(
               color: Colors.grey,

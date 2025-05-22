@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Note {
   final String id;
   final String title;
@@ -51,6 +53,21 @@ class Note {
       section: "In Progress",
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
+    );
+  }
+
+  factory Note.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+
+    return Note(
+      id: data["id"] ?? "",
+      title: data["title"] ?? "",
+      description: data["description"] ?? "",
+      date: (data["date"] as Timestamp).toDate(),
+      priority: data["priority"] ?? "",
+      section: data["section"] ?? "",
+      createdAt: (data["created_at"] as Timestamp).toDate(),
+      updatedAt: (data["updated_at"] as Timestamp).toDate(),
     );
   }
 

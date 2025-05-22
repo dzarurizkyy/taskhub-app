@@ -11,6 +11,7 @@ import 'package:taskhub_app/bloc/event/user_screen_event.dart';
 import 'package:taskhub_app/bloc/class/user_screen_bloc.dart';
 import 'package:taskhub_app/bloc/state/user_screen_state.dart';
 import 'package:taskhub_app/pages/login_page.dart';
+import 'package:taskhub_app/service/auth_service.dart';
 import 'package:taskhub_app/widgets/card/profile_avatar.dart';
 import 'package:taskhub_app/widgets/button/edit_profile_button.dart';
 import 'package:taskhub_app/widgets/bottom/navigation_bar_bottom.dart';
@@ -21,9 +22,10 @@ import 'package:taskhub_app/widgets/notification/alert.dart';
 
 class EditProfileTemplate extends StatelessWidget {
   static const routeName = "/profile";
-  final Future<bool> Function(BuildContext, int, String, String, String, String)
-      updateProfile;
-  const EditProfileTemplate({super.key, required this.updateProfile});
+  final authService = AuthService();
+  final Future<bool> Function(
+      BuildContext, String?, String, String, String, String) updateProfile;
+  EditProfileTemplate({super.key, required this.updateProfile});
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +103,8 @@ class EditProfileTemplate extends StatelessWidget {
                                 title: "Gender",
                                 list: ["male", "female"],
                                 initialValue: gender,
+                                fillColor: const Color.fromRGBO(158, 158, 158, 0.20),
+                                borderColor: const Color.fromRGBO(158, 158, 158, 0.20),
                                 onChanged: (value) {
                                   context
                                       .read<UserScreenBloc>()
@@ -174,6 +178,7 @@ class EditProfileTemplate extends StatelessWidget {
                               final prefs =
                                   await SharedPreferences.getInstance();
                               await prefs.clear();
+                              authService.logout();
                               if (!context.mounted) return;
                               Navigator.of(context)
                                   .pushReplacementNamed(LoginPage.routeName);

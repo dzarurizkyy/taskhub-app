@@ -5,6 +5,8 @@ class GenderProfileFormInput extends StatelessWidget {
   final String title;
   final List<String> list;
   final String initialValue;
+  final Color fillColor;
+  final Color borderColor;
   final Function(String?) onChanged;
 
   const GenderProfileFormInput({
@@ -13,6 +15,8 @@ class GenderProfileFormInput extends StatelessWidget {
     required this.list,
     required this.initialValue,
     required this.onChanged,
+    required this.fillColor,
+    required this.borderColor,
   });
 
   @override
@@ -34,13 +38,15 @@ class GenderProfileFormInput extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: Color.fromRGBO(158, 158, 158, 0.20),
+            border: Border.all(color: borderColor),
+            color: fillColor,
           ),
           child: DropdownButtonHideUnderline(
             child: ButtonTheme(
               alignedDropdown: true,
               child: DropdownButton<String>(
                 onChanged: onChanged,
+                padding: const EdgeInsets.all(0),
                 value: initialValue,
                 items: list.map(
                   (data) {
@@ -49,7 +55,7 @@ class GenderProfileFormInput extends StatelessWidget {
                       child: Text(
                         capitalizeText(data, "fullname"),
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 14,
                           fontFamily: "Nunito",
                           fontWeight: FontWeight.w500,
                           color: Color.fromRGBO(0, 0, 0, 0.8),
@@ -65,7 +71,9 @@ class GenderProfileFormInput extends StatelessWidget {
                   color: Color.fromRGBO(0, 0, 0, 0.8),
                 ),
                 icon: Padding(
-                  padding: const EdgeInsets.only(right: 12),
+                  padding: const EdgeInsets.only(
+                    right: 12,
+                  ),
                   child: Icon(
                     Icons.arrow_drop_down,
                     color: Color.fromRGBO(0, 2, 0, 1.0),

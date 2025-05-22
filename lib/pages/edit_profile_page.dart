@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskhub_app/models/user.dart';
 import 'package:taskhub_app/bloc/event/user_event.dart';
 import 'package:taskhub_app/bloc/class/user_bloc.dart';
@@ -14,7 +14,7 @@ class EditProfilePage extends StatelessWidget {
 
   Future<bool> _updateProfile(
     BuildContext context,
-    int id,
+    String? id,
     String name,
     String email,
     String gender,
@@ -28,7 +28,7 @@ class EditProfilePage extends StatelessWidget {
       (state) {
         if (state is UserLoaded) {
           completer.complete(true);
-          SaveUserToPrefs(name, gender);
+          saveUserToPrefs(name, gender);
           sub.cancel();
         }
 
