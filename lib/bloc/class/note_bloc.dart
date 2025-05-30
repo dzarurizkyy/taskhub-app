@@ -5,9 +5,9 @@ import 'package:taskhub_app/models/note.dart';
 import 'package:taskhub_app/service/note_service.dart';
 
 class NoteBloc extends Bloc<NoteEvent, NoteState> {
-  final NoteService _noteService = NoteService();
+  final NoteService noteService;
 
-  NoteBloc() : super(NoteInitial()) {
+  NoteBloc(this.noteService) : super(NoteInitial()) {
     on<FetchNotes>(_onFetchNotes);
     on<SearchNote>(_onSearchNote);
     on<AddNote>(_onAddNote);
@@ -20,7 +20,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     emit(NoteLoading());
 
     try {
-      final notes = await _noteService.fetchNote();
+      final notes = await noteService.fetchNote();
       emit(NoteLoaded(notes));
     } catch (e) {
       emit(NoteError("Failed to fetch notes. Please try again. $e"));
@@ -43,7 +43,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       );
 
       try {
-        final docId = await _noteService.createNote(tempNote);
+        final docId = await noteService.createNote(tempNote);
 
         if (docId != null) {
           final newNote = tempNote.copyWith(id: docId);
@@ -88,7 +88,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
             updatedAt: DateTime.now());
 
         try {
-          await _noteService.editNote(updatedNote);
+          await noteService.editNote(updatedNote);
           final updatedList = [...currentState.notes];
           updatedList[index] = updatedNote;
           emit(NoteLoaded(updatedList));
@@ -98,6 +98,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       }
     }
   }
+  
 
   Future<void> _onUpdateNote(UpdateNote event, Emitter<NoteState> emit) async {
     final currentState = state;
@@ -112,7 +113,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
         );
 
         try {
-          await _noteService.editNote(updatedNote);
+          await noteService.editNote(updatedNote);
           final updatedList = [...currentState.notes];
           updatedList[index] = updatedNote;
           emit(NoteLoaded(updatedList));
@@ -128,7 +129,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
 
     if (currentState is NoteLoaded) {
       try {
-        await _noteService.deleteNote(event.id);
+        await noteService.deleteNote(event.id);
         emit(
           NoteLoaded(
             currentState.notes.where((note) => note.id != event.id).toList(),

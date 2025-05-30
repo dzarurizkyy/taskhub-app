@@ -6,10 +6,10 @@ import 'package:taskhub_app/service/auth_service.dart';
 import 'package:taskhub_app/service/user_service.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
-  final UserService _userService = UserService();
-  final AuthService _authService = AuthService();
+  final UserService userService;
+  final AuthService authService;
 
-  UserBloc() : super(UserInitial()) {
+  UserBloc(this.userService, this.authService) : super(UserInitial()) {
     on<UpdateFormStatus>(_onUpdateFormStatus);
     on<RegistrationUser>(_onRegistrationUser);
     on<LoginUser>(_onLoginUser);
@@ -25,8 +25,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     emit(UserLoading());
 
     try {
-      final userID = await _authService.login(event.email, event.password);
-      final userMap = await _userService.fetchUserById(userID);
+      final userID = await authService.login(event.email, event.password);
+      final userMap = await userService.fetchUserById(userID);
 
       if (userMap == null) {
         emit(UserError("User data not found in Firestore"));
@@ -45,7 +45,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     emit(UserLoading());
 
     try {
-      final id = await AuthService().register(event.email, event.password);
+      final id = await authService.register(event.email, event.password);
 
       final now = DateTime.now();
 
@@ -59,7 +59,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         updatedAt: now,
       );
 
-      await _userService.createUser(user);
+      await userService.createUser(user);
       emit(UserLoaded(user));
     } catch (e) {
       emit(UserError("Failed to create user. Please try again."));
@@ -71,7 +71,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     Emitter<UserState> emit,
   ) async {
     try {
-      await _userService.updateUser(event.user);
+      await userService.updateUser(event.user);
       emit(UserLoaded(event.user));
     } catch (e) {
       emit(UserError("Failed to update profile. Please try again"));

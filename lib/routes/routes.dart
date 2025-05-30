@@ -11,10 +11,13 @@ import 'package:taskhub_app/pages/home_page.dart';
 import 'package:taskhub_app/pages/login_page.dart';
 import 'package:taskhub_app/pages/edit_profile_page.dart';
 import 'package:taskhub_app/pages/registration_page.dart';
+import 'package:taskhub_app/service/auth_service.dart';
+import 'package:taskhub_app/service/note_service.dart';
+import 'package:taskhub_app/service/user_service.dart';
 
 class AppRouter {
-  final NoteBloc note = NoteBloc();
-  final UserBloc user = UserBloc();
+  final NoteBloc note = NoteBloc(NoteService());
+  final UserBloc user = UserBloc(UserService(), AuthService());
   final UserScreenBloc userSceen =
       UserScreenBloc(initialGender: "male", initialVisible: true);
   final NoteScreenBloc noteScreen =

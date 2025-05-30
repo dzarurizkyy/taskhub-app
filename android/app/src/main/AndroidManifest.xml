@@ -35,10 +35,6 @@
             </intent-filter>
         </activity>
 
-        <!-- HAPUS deklarasi manual FirebaseMessagingService -->
-        <!-- Jika kamu override service ini, GANTI dengan nama class kustom kamu -->
-
-        <!-- Tetap biarkan service ComponentDiscoveryService -->
         <service
             android:name="com.google.firebase.components.ComponentDiscoveryService"
             android:exported="false">

@@ -10,6 +10,7 @@ android/app/.cxx/Debug
 
 pubspec.lock
 doc/api/
+android/app/google-services.json
 
 .env*
 
