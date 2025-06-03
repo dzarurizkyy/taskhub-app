@@ -33,7 +33,6 @@ class LoginPage extends StatelessWidget {
           saveUserToPrefs(state.user.name, state.user.gender);
           sub.cancel();
         } else if (state is UserError) {
-          print("error ${state.message}");
           completer.complete(false);
           sub.cancel();
         }
