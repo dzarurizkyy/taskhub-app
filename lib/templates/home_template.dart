@@ -32,12 +32,14 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  
+    Future.microtask(() {
+      if (!context.mounted) return {};
+      context.read<NoteBloc>().add(FetchNotes());
+    });
 
     return BlocBuilder<NoteBloc, NoteState>(
       builder: (context, state) {
         if (state is NoteLoading) {
-          
           return Scaffold(
             backgroundColor: const Color.fromRGBO(255, 255, 255, 1.0),
             body: Center(
@@ -98,7 +100,9 @@ class Home extends StatelessWidget {
             child: Text(state.message),
           );
         }
-        return Text("Hello $state");
+        return Scaffold(
+          backgroundColor: const Color.fromRGBO(252, 250, 250, 1),
+        );
       },
     );
   }
