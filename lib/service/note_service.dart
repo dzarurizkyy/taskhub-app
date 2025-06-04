@@ -15,16 +15,16 @@ class NoteService {
     return docData.get();
   }
 
-  Future<String?> createNote(Note req) async {
+  Future<String?> createNote(title, description, date, priority) async {
     CollectionReference note = firestore.collection("note");
 
     try {
       DocumentReference docRef = await note.add({
-        "title": req.title,
-        "description": req.description,
-        "date": req.date,
-        "priority": req.priority,
-        "section": req.section,
+        "title": title,
+        "description": description,
+        "date": date,
+        "priority": priority,
+        "section": "In Progress",
         "created_at": DateTime.now(),
         "updated_at": DateTime.now(),
       });

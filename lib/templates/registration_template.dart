@@ -108,8 +108,9 @@ class Registration extends StatelessWidget {
                                 "Your account has been created successfully",
                             failedMessage:
                                 "Registration failed. Please try again",
-                            successPadding: validation ? 0 : 10,
-                            failedPadding: validation ? 10 : 0,
+                            successPadding: 0,
+                            failedPadding: 0,
+                            fontSizeNotification: 11,
                             validation: () async {
                               return submit(context);
                             },

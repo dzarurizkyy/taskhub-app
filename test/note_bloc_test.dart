@@ -100,7 +100,8 @@ void main() {
   blocTest<NoteBloc, NoteState>(
     "emits [NoteLoaded] with new note added when AddNote is successful",
     build: () {
-      when(() => mockNoteService.createNote(any())).thenAnswer(
+      when(() => mockNoteService.createNote(any(), any(), any(), any()))
+          .thenAnswer(
         (_) async => "new_id",
       );
       return noteBloc;
@@ -114,7 +115,8 @@ void main() {
           (s) => s.notes.last.title, "last note title", "New Note Title"),
     ],
     verify: (_) {
-      verify(() => mockNoteService.createNote(any())).called(1);
+      verify(() => mockNoteService.createNote(any(), any(), any(), any()))
+          .called(1);
     },
   );
 
@@ -122,7 +124,7 @@ void main() {
     "emits [NoteError] when createNote returns null",
     build: () {
       when(
-        () => mockNoteService.createNote(any()),
+        () => mockNoteService.createNote(any(), any(), any(), any()),
       ).thenAnswer(
         (_) async => null,
       );
@@ -140,7 +142,8 @@ void main() {
       )
     ],
     verify: (_) {
-      verify(() => mockNoteService.createNote(any())).called(1);
+      verify(() => mockNoteService.createNote(any(), any(), any(), any()))
+          .called(1);
     },
   );
 
@@ -148,7 +151,7 @@ void main() {
     "emits [NoteError] when createNote throws an exception",
     build: () {
       when(
-        () => mockNoteService.createNote(any()),
+        () => mockNoteService.createNote(any(), any(), any(), any()),
       ).thenThrow(
         Exception("Create note failed"),
       );
@@ -166,7 +169,8 @@ void main() {
       )
     ],
     verify: (_) {
-      verify(() => mockNoteService.createNote(any())).called(1);
+      verify(() => mockNoteService.createNote(any(), any(), any(), any()))
+          .called(1);
     },
   );
 

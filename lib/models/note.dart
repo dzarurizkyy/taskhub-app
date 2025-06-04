@@ -60,7 +60,7 @@ class Note {
     final data = doc.data() as Map<String, dynamic>;
 
     return Note(
-      id: data["id"] ?? "",
+      id: doc.id,
       title: data["title"] ?? "",
       description: data["description"] ?? "",
       date: (data["date"] as Timestamp).toDate(),

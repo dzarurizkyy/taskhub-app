@@ -4,12 +4,14 @@ class Alert extends StatelessWidget {
   final IconData icon;
   final Color colorAlert;
   final String message;
+  final double fontSizeNotification;
 
   const Alert({
     super.key,
     required this.icon,
     required this.colorAlert,
     required this.message,
+    required this.fontSizeNotification
   });
 
   @override
@@ -38,7 +40,7 @@ class Alert extends StatelessWidget {
             message,
             style: TextStyle(
               fontFamily: "Nunito",
-              fontSize: 12,
+              fontSize: fontSizeNotification,
               fontWeight: FontWeight.w700,
             ),
           )

@@ -9,6 +9,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
 
   NoteBloc(this.noteService) : super(NoteInitial()) {
     on<FetchNotes>(_onFetchNotes);
+    on<FetchNoteById>(_onFetchNoteById);
     on<SearchNote>(_onSearchNote);
     on<AddNote>(_onAddNote);
     on<EditNote>(_onEditNote);
@@ -27,26 +28,31 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     }
   }
 
+  Future<void> _onFetchNoteById(
+      FetchNoteById event, Emitter<NoteState> emit) async {
+    emit(NoteLoading());
+
+    try {
+      final note = await noteService.fetchNoteById(event.id);
+      final noteData = Note.fromFirestore(note);
+      emit(NoteLoadedById(noteData));
+    } catch (e) {
+      emit(NoteError("Failed to fetch note by id. Please try again. $e"));
+    }
+  }
+
   Future<void> _onAddNote(AddNote event, Emitter<NoteState> emit) async {
     final currentState = state;
 
     if (currentState is NoteLoaded) {
-      final tempNote = Note(
-        id: "",
-        title: event.title,
-        description: event.description,
-        date: event.date,
-        priority: event.priority,
-        section: "In Progress",
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-
       try {
-        final docId = await noteService.createNote(tempNote);
+        final docId = await noteService.createNote(
+            event.title, event.description, event.date, event.priority);
 
         if (docId != null) {
-          final newNote = tempNote.copyWith(id: docId);
+          final newNote =
+              Note.fromFirestore(await noteService.fetchNoteById(docId));
+
           emit(NoteLoaded([...currentState.notes, newNote]));
         } else {
           emit(NoteError("Failed to create notes. Please try again."));
@@ -73,53 +79,43 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
   Future<void> _onEditNote(EditNote event, Emitter<NoteState> emit) async {
     final currentState = state;
 
-    if (currentState is NoteLoaded) {
-      final index =
-          currentState.notes.indexWhere((note) => note.id == event.id);
-      if (index != -1) {
-        final updatedNote = currentState.notes[index].copyWith(
-            id: event.id,
-            title: event.title,
-            description: event.description,
-            date: event.date,
-            priority: event.priority,
-            section: currentState.notes[index].section,
-            createdAt: currentState.notes[index].createdAt,
-            updatedAt: DateTime.now());
+    if (currentState is NoteLoadedById) {
+      final updatedNote = currentState.note.copyWith(
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        date: event.date,
+        priority: event.priority,
+        section: currentState.note.section,
+        createdAt: currentState.note.createdAt,
+        updatedAt: DateTime.now(),
+      );
 
-        try {
-          await noteService.editNote(updatedNote);
-          final updatedList = [...currentState.notes];
-          updatedList[index] = updatedNote;
-          emit(NoteLoaded(updatedList));
-        } catch (e) {
-          emit(NoteError("Failed to edit the note. Please try again."));
-        }
+      try {
+        await noteService.editNote(updatedNote);
+        final note = await noteService.fetchNoteById(event.id);
+        emit(NoteLoadedById(Note.fromFirestore(note)));
+      } catch (e) {
+        emit(NoteError("Failed to edit the note. Please try again."));
       }
     }
   }
-  
 
   Future<void> _onUpdateNote(UpdateNote event, Emitter<NoteState> emit) async {
     final currentState = state;
 
-    if (currentState is NoteLoaded) {
-      final index =
-          currentState.notes.indexWhere((note) => note.id == event.id);
-      if (index != -1) {
-        final updatedNote = currentState.notes[index].copyWith(
-          section: "Completed",
-          updatedAt: DateTime.now(),
-        );
+    if (currentState is NoteLoadedById) {
+      final updatedNote = currentState.note.copyWith(
+        section: "Completed",
+        updatedAt: DateTime.now(),
+      );
 
-        try {
-          await noteService.editNote(updatedNote);
-          final updatedList = [...currentState.notes];
-          updatedList[index] = updatedNote;
-          emit(NoteLoaded(updatedList));
-        } catch (e) {
-          emit(NoteError("Failed to update the note. Please try again."));
-        }
+      try {
+        await noteService.editNote(updatedNote);
+        final note = await noteService.fetchNoteById(event.id);
+        emit(NoteLoadedById(Note.fromFirestore(note)));
+      } catch (e) {
+        emit(NoteError("Failed to update the note. Please try again."));
       }
     }
   }
@@ -127,14 +123,10 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
   Future<void> _onDeleteNote(DeleteNote event, Emitter<NoteState> emit) async {
     final currentState = state;
 
-    if (currentState is NoteLoaded) {
+    if (currentState is NoteLoadedById) {
       try {
         await noteService.deleteNote(event.id);
-        emit(
-          NoteLoaded(
-            currentState.notes.where((note) => note.id != event.id).toList(),
-          ),
-        );
+        await noteService.fetchNote();
       } catch (e) {
         emit(NoteError("Failed to delete note. Please try again."));
       }

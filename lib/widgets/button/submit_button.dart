@@ -10,6 +10,7 @@ class SubmitButton extends StatefulWidget {
   final String failedMessage;
   final double successPadding;
   final double failedPadding;
+  final double fontSizeNotification;
   final Future<bool> Function()? validation;
 
   const SubmitButton({
@@ -22,6 +23,7 @@ class SubmitButton extends StatefulWidget {
     required this.failedMessage,
     required this.successPadding,
     required this.failedPadding,
+    required this.fontSizeNotification,
     required this.validation,
   });
 
@@ -50,6 +52,7 @@ class _SubmitButtonState extends State<SubmitButton> {
             colorAlert: isValid
                 ? const Color.fromARGB(1000, 63, 125, 88)
                 : const Color.fromARGB(1000, 190, 49, 68),
+            fontSizeNotification: widget.fontSizeNotification,
             message: isValid ? widget.successMessage : widget.failedMessage,
           ),
         ),

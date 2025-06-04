@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskhub_app/bloc/event/user_event.dart';
 import 'package:taskhub_app/bloc/state/user_state.dart';
 import 'package:taskhub_app/models/user.dart';
@@ -10,15 +11,32 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final AuthService authService;
 
   UserBloc(this.userService, this.authService) : super(UserInitial()) {
-    on<UpdateFormStatus>(_onUpdateFormStatus);
     on<RegistrationUser>(_onRegistrationUser);
     on<LoginUser>(_onLoginUser);
     on<UpdateProfile>(_onUpdateProfile);
+    on<LoadCurrentUser>(_onLoadCurrentUser);
   }
 
-  void _onUpdateFormStatus(UpdateFormStatus event, Emitter<UserState> emit) {
-    bool isFormValid = event.email.isNotEmpty && event.password.isNotEmpty;
-    emit(FormStatusUpdated(isFormValid));
+  Future<void> _onLoadCurrentUser(
+      LoadCurrentUser event, Emitter<UserState> emit) async {
+    emit(UserLoading());
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString("user_id");
+
+      if (userId != null) {
+        final userMap = await userService.fetchUserById(userId);
+        if (userMap != null) {
+          final userData = User.fromFirestore(userMap);
+          emit(UserLoaded(userData));
+          return;
+        }
+      }
+      emit(UserInitial());
+    } catch (e) {
+      emit(UserError("Failed to load current user"));
+    }
   }
 
   Future<void> _onLoginUser(LoginUser event, Emitter<UserState> emit) async {
@@ -34,6 +52,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       }
 
       final userData = User.fromFirestore(userMap);
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString("user_id", userID);
+
       emit(UserLoaded(userData));
     } catch (e) {
       emit(UserError("Failed to login. Please try again."));
@@ -45,12 +67,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     emit(UserLoading());
 
     try {
-      final id = await authService.register(event.email, event.password);
+      final userID = await authService.register(event.email, event.password);
 
       final now = DateTime.now();
 
       final user = User(
-        id: id,
+        id: userID,
         name: event.name,
         gender: event.gender,
         email: event.email,
@@ -60,6 +82,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       );
 
       await userService.createUser(user);
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString("user_id", userID);
+
       emit(UserLoaded(user));
     } catch (e) {
       emit(UserError("Failed to create user. Please try again."));

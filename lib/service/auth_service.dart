@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:taskhub_app/models/user.dart' as local_user;
 
 class AuthService {
+  final fb.FirebaseAuth _firebaseAuth = fb.FirebaseAuth.instance;
+  
   Stream<local_user.User?> get streamAuthStatus {
-    return fb.FirebaseAuth.instance.authStateChanges().asyncMap((user) async {
+    return _firebaseAuth.authStateChanges().asyncMap((user) async {
       if (user == null) {
         return null;
       }
@@ -22,7 +24,7 @@ class AuthService {
 
   Future<String> register(String email, String password) async {
     try {
-      final fb.UserCredential userCredential = await fb.FirebaseAuth.instance
+      final fb.UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
       return userCredential.user?.uid ?? "";
     } on fb.FirebaseAuthException catch (e) {
@@ -32,7 +34,7 @@ class AuthService {
 
   Future<String> login(String email, String password) async {
     try {
-      fb.UserCredential userCredential = await fb.FirebaseAuth.instance
+      fb.UserCredential userCredential = await _firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
       final fb.User? firebaseUser = userCredential.user;
       if (firebaseUser == null) {
@@ -46,6 +48,6 @@ class AuthService {
   }
 
   void logout() async {
-    await fb.FirebaseAuth.instance.signOut();
+    await _firebaseAuth.signOut();
   }
 }

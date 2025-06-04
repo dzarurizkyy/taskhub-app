@@ -2,6 +2,11 @@ abstract class NoteEvent {}
 
 class FetchNotes extends NoteEvent {}
 
+class FetchNoteById extends NoteEvent {
+  final String id;
+  FetchNoteById(this.id);
+}
+
 class AddNote extends NoteEvent {
   final String title;
   final String description;

@@ -32,9 +32,12 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  
+
     return BlocBuilder<NoteBloc, NoteState>(
       builder: (context, state) {
         if (state is NoteLoading) {
+          
           return Scaffold(
             backgroundColor: const Color.fromRGBO(255, 255, 255, 1.0),
             body: Center(
@@ -95,7 +98,7 @@ class Home extends StatelessWidget {
             child: Text(state.message),
           );
         }
-        return Container();
+        return Text("Hello $state");
       },
     );
   }

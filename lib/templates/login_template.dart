@@ -1,9 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:taskhub_app/bloc/class/user_bloc.dart';
-import 'package:taskhub_app/bloc/event/user_event.dart';
-import 'package:taskhub_app/bloc/state/user_state.dart';
 import 'package:taskhub_app/helpers/validation.dart';
 import 'package:taskhub_app/pages/home_page.dart';
 import 'package:taskhub_app/pages/registration_page.dart';
@@ -21,17 +17,15 @@ class Login extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     final emailController = TextEditingController();
     final passController = TextEditingController();
+    final ValueNotifier<bool> isButtonEnabled = ValueNotifier(false);
 
-    emailController.addListener(() {
-      context
-          .read<UserBloc>()
-          .add(UpdateFormStatus(emailController.text, passController.text));
-    });
-    passController.addListener(() {
-      context
-          .read<UserBloc>()
-          .add(UpdateFormStatus(emailController.text, passController.text));
-    });
+    void validateForm() {
+      isButtonEnabled.value =
+          emailController.text.isNotEmpty && passController.text.isNotEmpty;
+    }
+
+    emailController.addListener(validateForm);
+    passController.addListener(validateForm);
 
     return Scaffold(
       body: Center(
@@ -64,25 +58,21 @@ class Login extends StatelessWidget {
                       validate: validatePassword,
                     ),
                     const SizedBox(height: 30),
-                    BlocBuilder<UserBloc, UserState>(
-                      builder: (context, state) {
-                        bool isButtonEnabled = false;
-
-                        if (state is FormStatusUpdated) {
-                          isButtonEnabled = state.isFormValid;
-                        }
-
-                        return SizedBox(
-                          width: double.infinity,
-                          child: SubmitButton(
+                    SizedBox(
+                      width: double.infinity,
+                      child: ValueListenableBuilder<bool>(
+                        valueListenable: isButtonEnabled,
+                        builder: (context, validation, _) {
+                          return SubmitButton(
                             formkey: formKey,
                             title: "Continue",
                             titleBold: FontWeight.w700,
-                            isButtonEnabled: isButtonEnabled,
+                            isButtonEnabled: isButtonEnabled.value,
                             successMessage: "Login Success",
                             failedMessage: "Invalid email or password",
                             successPadding: 65,
                             failedPadding: 30,
+                            fontSizeNotification: 12,
                             validation: () async {
                               if (formKey.currentState!.validate()) {
                                 final success = await attemptLogin(
@@ -91,27 +81,20 @@ class Login extends StatelessWidget {
                                   passController.text,
                                 );
                                 if (success) {
-                                  if (context.mounted) {
-                                    Navigator.of(context)
-                                        .pushNamed(HomePage.routeName);
+                                  if (!context.mounted) {
+                                    return false;
                                   }
+
+                                  Navigator.pushReplacementNamed(
+                                      context, HomePage.routeName);
                                   return true;
-                                } else {
-                                  if (context.mounted) {
-                                    context.read<UserBloc>().add(
-                                          UpdateFormStatus(
-                                            emailController.text,
-                                            passController.text,
-                                          ),
-                                        );
-                                  }
                                 }
                               }
                               return false;
                             },
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                     const SizedBox(height: 30),
                     Row(

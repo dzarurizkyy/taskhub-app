@@ -9,6 +9,7 @@ android {
     namespace = "com.luarsekolah.taskhub"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+    archivesBaseName = "taskhub"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

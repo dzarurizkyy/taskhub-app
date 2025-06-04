@@ -13,7 +13,7 @@
         android:value="false" />
 
     <application
-        android:label="my_first_app"
+        android:label="Task Hub"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

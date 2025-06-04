@@ -7,9 +7,6 @@ import 'package:taskhub_app/helpers/validation.dart';
 import 'package:taskhub_app/models/user.dart';
 import 'package:taskhub_app/bloc/class/user_bloc.dart';
 import 'package:taskhub_app/bloc/state/user_state.dart';
-import 'package:taskhub_app/bloc/event/user_screen_event.dart';
-import 'package:taskhub_app/bloc/class/user_screen_bloc.dart';
-import 'package:taskhub_app/bloc/state/user_screen_state.dart';
 import 'package:taskhub_app/pages/login_page.dart';
 import 'package:taskhub_app/service/auth_service.dart';
 import 'package:taskhub_app/widgets/card/profile_avatar.dart';
@@ -33,7 +30,8 @@ class EditProfileTemplate extends StatelessWidget {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
-    late String gender;
+    final ValueNotifier<String> gender = ValueNotifier("male");
+    final ValueNotifier<bool> visiblePassword = ValueNotifier(true);
 
     return Scaffold(
       appBar: AppBar(
@@ -68,6 +66,7 @@ class EditProfileTemplate extends StatelessWidget {
                     capitalizeText(user.name ?? "", "fullname");
                 emailController.text = user.email ?? "";
                 passwordController.text = user.password ?? "";
+                gender.value = user.gender ?? "male";
               },
             );
             return SingleChildScrollView(
@@ -93,42 +92,33 @@ class EditProfileTemplate extends StatelessWidget {
                             title: "Email",
                             controller: emailController,
                           ),
-                          BlocBuilder<UserScreenBloc, UserScreenState>(
-                            builder: (context, screenState) {
-                              gender = state.user.gender ?? "";
-                              if (screenState is UserScreenLoaded) {
-                                gender = screenState.gender;
-                              }
+                          ValueListenableBuilder<String>(
+                            valueListenable: gender,
+                            builder: (context, value, _) {
                               return GenderProfileFormInput(
                                 title: "Gender",
                                 list: ["male", "female"],
-                                initialValue: gender,
-                                fillColor: const Color.fromRGBO(158, 158, 158, 0.20),
-                                borderColor: const Color.fromRGBO(158, 158, 158, 0.20),
+                                initialValue: gender.value,
+                                fillColor:
+                                    const Color.fromRGBO(158, 158, 158, 0.20),
+                                borderColor:
+                                    const Color.fromRGBO(158, 158, 158, 0.20),
                                 onChanged: (value) {
-                                  context
-                                      .read<UserScreenBloc>()
-                                      .add(ChangeGender(value!));
+                                  gender.value = value ?? "male";
                                 },
                               );
                             },
                           ),
-                          BlocBuilder<UserScreenBloc, UserScreenState>(
-                            builder: (context, screenState) {
-                              bool isVisible = true;
-                              if (screenState is UserScreenLoaded) {
-                                isVisible = screenState.isVisible;
-                              }
+                          ValueListenableBuilder<bool>(
+                            valueListenable: visiblePassword,
+                            builder: (context, value, _) {
                               return PasswordProfileFormInput(
                                 title: "Password",
-                                isVisible: isVisible,
+                                isVisible: visiblePassword.value,
                                 controller: passwordController,
                                 onTap: () {
-                                  context.read<UserScreenBloc>().add(
-                                        ChangeVisiblePassword(
-                                          !isVisible,
-                                        ),
-                                      );
+                                  visiblePassword.value =
+                                      !visiblePassword.value;
                                 },
                               );
                             },
@@ -154,7 +144,7 @@ class EditProfileTemplate extends StatelessWidget {
                                     user.id,
                                     nameController.text,
                                     emailController.text,
-                                    gender,
+                                    gender.value,
                                     passwordController.text,
                                   );
                                   if (isSuccess) {
@@ -179,9 +169,10 @@ class EditProfileTemplate extends StatelessWidget {
                                   await SharedPreferences.getInstance();
                               await prefs.clear();
                               authService.logout();
+
                               if (!context.mounted) return;
-                              Navigator.of(context)
-                                  .pushReplacementNamed(LoginPage.routeName);
+                              Navigator.pushReplacementNamed(
+                                  context, LoginPage.routeName);
                             },
                             child: Text(
                               "Log Out",
@@ -200,6 +191,8 @@ class EditProfileTemplate extends StatelessWidget {
                 ],
               ),
             );
+          } else if (state is UserError) {
+            return Text(state.message);
           } else {
             return Container();
           }
@@ -246,6 +239,7 @@ SnackBar? _buildEditStatus(
           icon: Icons.error_rounded,
           colorAlert: Color.fromRGBO(190, 49, 68, 1.0),
           message: message,
+          fontSizeNotification: 12,
         ),
       ),
     );
@@ -259,6 +253,7 @@ SnackBar? _buildEditStatus(
       icon: Icons.done_rounded,
       colorAlert: Color.fromRGBO(63, 125, 88, 1.0),
       message: "Your profile has been successfully updated",
+      fontSizeNotification: 12,
     ),
   );
 }

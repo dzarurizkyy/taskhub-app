@@ -76,6 +76,7 @@ class NoteForm extends StatelessWidget {
                 DateTime.now(),
               ),
             );
+        Navigator.of(context).pop();
       } else {
         context.read<NoteBloc>().add(
               AddNote(
@@ -90,6 +91,7 @@ class NoteForm extends StatelessWidget {
       }
 
       Navigator.of(context).pop();
+
       return true;
     } catch (e) {
       return false;
@@ -260,6 +262,7 @@ class NoteForm extends StatelessWidget {
                                         : "Failed to add note. Please try again",
                                     successPadding: isEdit ? 30 : 40,
                                     failedPadding: 30,
+                                    fontSizeNotification: 12,
                                     validation: () async {
                                       return _submit(context);
                                     },

@@ -13,7 +13,7 @@ class NoteCard extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context)
-            .pushNamed(DetailNotePage.routeName, arguments: note);
+            .pushReplacementNamed(DetailNotePage.routeName, arguments: note.id);
       },
       child: Container(
         width: MediaQuery.of(context).size.width,

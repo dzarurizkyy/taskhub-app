@@ -32,8 +32,11 @@ class App extends StatelessWidget {
         }
 
         final homeWidget = snapshot.data != null
-            ? BlocProvider.value(
-                value: appRouter.note,
+            ? MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(value: appRouter.note),
+                  BlocProvider.value(value: appRouter.user),
+                ],
                 child: HomePage(),
               )
             : BlocProvider.value(

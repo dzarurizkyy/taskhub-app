@@ -20,7 +20,7 @@ class DetailHeader extends StatelessWidget {
           color: Color.fromRGBO(172, 172, 172, 1.0),
         ),
         onPressed: () {
-          Navigator.of(context).pop(backRoute);
+          Navigator.of(context).pushReplacementNamed(backRoute);
         },
       ),
       actions: [
