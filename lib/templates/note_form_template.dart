@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:taskhub_app/bloc/class/note_bloc.dart';
-import 'package:taskhub_app/bloc/class/note_screen_bloc.dart';
 import 'package:taskhub_app/bloc/event/note_event.dart';
-import 'package:taskhub_app/bloc/event/note_screen_event.dart';
-import 'package:taskhub_app/bloc/state/note_screen_state.dart';
+import 'package:taskhub_app/bloc/state/note_state.dart';
 import 'package:taskhub_app/helpers/datetime.dart';
 import 'package:taskhub_app/models/note.dart';
 import 'package:taskhub_app/widgets/button/select_button.dart';
@@ -24,6 +22,12 @@ class NoteForm extends StatelessWidget {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
+  final ValueNotifier<bool> isButtonEnabled = ValueNotifier(false);
+  final ValueNotifier<String> defaultPriority = ValueNotifier("High");
+  final ValueNotifier<String> defaultDate = ValueNotifier(
+      "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}");
+  final ValueNotifier<String> defaultTime = ValueNotifier(
+      "${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}");
 
   final List<String> _priorities = ["High", "Medium", "Low"];
 
@@ -34,7 +38,8 @@ class NoteForm extends StatelessWidget {
         firstDate: DateTime.now(),
         lastDate: DateTime(DateTime.now().year, 12, 31));
     if (picked != null) {
-      _dateController.text = "${picked.day}/${picked.month}/${picked.year}";
+      defaultDate.value = "${picked.day}/${picked.month}/${picked.year}";
+      _dateController.text = defaultDate.value;
     }
   }
 
@@ -52,13 +57,15 @@ class NoteForm extends StatelessWidget {
 
     if (picked != null) {
       if (!context.mounted) return;
-      _timeController.text = picked.format(context);
+      defaultTime.value =
+          "${picked.hour.toString().padLeft(2, "0")}:${picked.minute.toString().padLeft(2, "0")}";
+      _timeController.text = defaultTime.value;
     }
   }
 
   bool _submit(BuildContext context) {
     final sanitizeText = HtmlUnescape();
-    final date = combineDateTime(_dateController.text, _timeController.text);
+    final date = combineDateTime(defaultDate.value, defaultTime.value);
 
     try {
       if (option == "edit") {
@@ -69,8 +76,7 @@ class NoteForm extends StatelessWidget {
                 sanitizeText.convert(_titleController.text),
                 sanitizeText.convert(_descriptionController.text),
                 date,
-                (context.read<NoteScreenBloc>().state as NoteScreenLoaded)
-                    .priority,
+                defaultPriority.value,
                 note.section,
                 note.updatedAt,
                 DateTime.now(),
@@ -80,18 +86,13 @@ class NoteForm extends StatelessWidget {
       } else {
         context.read<NoteBloc>().add(
               AddNote(
-                sanitizeText.convert(_titleController.text),
-                sanitizeText.convert(_descriptionController.text),
-                date,
-                (context.read<NoteScreenBloc>().state as NoteScreenLoaded)
-                    .priority,
-              ),
+                  sanitizeText.convert(_titleController.text),
+                  sanitizeText.convert(_descriptionController.text),
+                  date,
+                  defaultPriority.value),
             );
-        context.read<NoteScreenBloc>().add(ChangeButtonStatus("", "", "", ""));
       }
-
       Navigator.of(context).pop();
-
       return true;
     } catch (e) {
       return false;
@@ -101,60 +102,18 @@ class NoteForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isEdit = option == "edit";
-    if (isEdit) {
-      final note = ModalRoute.of(context)!.settings.arguments as Note;
-      context.read<NoteScreenBloc>().add(ChangePriority(note.priority));
-      _titleController.text = note.title;
-      _descriptionController.text = note.description;
-      _dateController.text =
-          "${note.date.day}/${note.date.month}/${note.date.year}";
-      _timeController.text =
-          "${note.date.hour.toString().padLeft(2, '0')}:${note.date.minute.toString().padLeft(2, '0')}";
+
+    void validateForm() {
+      isButtonEnabled.value = _titleController.text.isNotEmpty &&
+          _descriptionController.text.isNotEmpty &&
+          _dateController.text.isNotEmpty &&
+          _timeController.text.isNotEmpty;
     }
 
-    _titleController.addListener(() {
-      context.read<NoteScreenBloc>().add(
-            ChangeButtonStatus(
-              _titleController.text,
-              _descriptionController.text,
-              _dateController.text,
-              _timeController.text,
-            ),
-          );
-    });
-
-    _descriptionController.addListener(() {
-      context.read<NoteScreenBloc>().add(
-            ChangeButtonStatus(
-              _titleController.text,
-              _descriptionController.text,
-              _dateController.text,
-              _timeController.text,
-            ),
-          );
-    });
-
-    _dateController.addListener(() {
-      context.read<NoteScreenBloc>().add(
-            ChangeButtonStatus(
-              _titleController.text,
-              _descriptionController.text,
-              _dateController.text,
-              _timeController.text,
-            ),
-          );
-    });
-
-    _timeController.addListener(() {
-      context.read<NoteScreenBloc>().add(
-            ChangeButtonStatus(
-              _titleController.text,
-              _descriptionController.text,
-              _dateController.text,
-              _timeController.text,
-            ),
-          );
-    });
+    _titleController.addListener(validateForm);
+    _descriptionController.addListener(validateForm);
+    _dateController.addListener(validateForm);
+    _timeController.addListener(validateForm);
 
     return Scaffold(
       appBar: NoteFormHeader(title: isEdit ? "Edit Note" : "Add Note"),
@@ -167,116 +126,138 @@ class NoteForm extends StatelessWidget {
           child: Wrap(
             runSpacing: 15,
             children: [
-              Form(
-                key: _formKey,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(255, 255, 255, 1.0),
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromRGBO(17, 17, 26, 0.05),
-                          offset: Offset(0, 1),
-                          blurRadius: 0,
-                        ),
-                        BoxShadow(
-                          color: Color.fromRGBO(17, 17, 26, 0.1),
-                          offset: Offset(0, 0),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Wrap(
-                        runSpacing: 15,
-                        children: [
-                          TitleNoteFormInput(
-                            title: "Task Name",
-                            hint: "Enter task title",
-                            controller: _titleController,
-                          ),
-                          DescriptionNoteFormInput(
-                            title: "Description",
-                            hint: "Describe your task",
-                            controller: _descriptionController,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: DateNoteformInput(
-                                  title: "Due Date",
-                                  hint: "DD/MM/YY",
-                                  controller: _dateController,
-                                  picker: () => _pickDate(context),
-                                ),
+              BlocBuilder<NoteBloc, NoteState>(
+                builder: (context, state) {
+                  if (state is NoteLoadedById || state is NoteLoaded) {
+                    if (option == "edit" && state is NoteLoadedById) {
+                      _titleController.text = state.note.title;
+                      _descriptionController.text = state.note.description;
+                      _dateController.text =
+                          "${state.note.date.day}/${state.note.date.month}/${state.note.date.year}";
+                      _timeController.text =
+                          "${state.note.date.hour.toString().padLeft(2, "0")}:${state.note.date.minute.toString().padLeft(2, "0")}";
+                    }
+
+                    return Form(
+                      key: _formKey,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(255, 255, 255, 1.0),
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color.fromRGBO(17, 17, 26, 0.05),
+                                offset: Offset(0, 1),
+                                blurRadius: 0,
                               ),
-                              SizedBox(width: 15),
-                              Expanded(
-                                child: DateNoteformInput(
-                                  title: "Due Time",
-                                  hint: "HH:MM",
-                                  controller: _timeController,
-                                  picker: () => _pickTime(context),
-                                ),
-                              )
+                              BoxShadow(
+                                color: Color.fromRGBO(17, 17, 26, 0.1),
+                                offset: Offset(0, 0),
+                                blurRadius: 8,
+                              ),
                             ],
                           ),
-                          BlocBuilder<NoteScreenBloc, NoteScreenState>(
-                            builder: (context, state) {
-                              if (state is NoteScreenLoaded) {
-                                return SelectButton(
-                                  type: "note_form",
-                                  title: "Priority",
-                                  choice: _priorities,
-                                  priority: state.priority,
-                                  selected: (value) {
-                                    context.read<NoteScreenBloc>().add(
-                                          ChangePriority(value),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Wrap(
+                              runSpacing: 15,
+                              children: [
+                                TitleNoteFormInput(
+                                  title: "Task Name",
+                                  hint: "Enter task title",
+                                  controller: _titleController,
+                                ),
+                                DescriptionNoteFormInput(
+                                  title: "Description",
+                                  hint: "Describe your task",
+                                  controller: _descriptionController,
+                                ),
+                                Row(
+                                  children: [
+                                    ValueListenableBuilder<String>(
+                                      valueListenable: defaultDate,
+                                      builder: (context, value, child) {
+                                        return Expanded(
+                                          child: DateNoteformInput(
+                                            title: "Due Date",
+                                            hint: "DD/MM/YY",
+                                            controller: _dateController,
+                                            picker: () => _pickDate(context),
+                                          ),
                                         );
+                                      },
+                                    ),
+                                    SizedBox(width: 15),
+                                    ValueListenableBuilder<String>(
+                                      valueListenable: defaultTime,
+                                      builder: (context, value, child) {
+                                        return Expanded(
+                                          child: DateNoteformInput(
+                                            title: "Due Time",
+                                            hint: "HH:MM",
+                                            controller: _timeController,
+                                            picker: () => _pickTime(context),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  ],
+                                ),
+                                ValueListenableBuilder<String>(
+                                  valueListenable: defaultPriority,
+                                  builder: (context, currentPriority, _) {
+                                    return SelectButton(
+                                      type: "note_form",
+                                      title: "Priority",
+                                      choice: _priorities,
+                                      priority: defaultPriority.value,
+                                      selected: (value) {
+                                        defaultPriority.value = value;
+                                      },
+                                    );
                                   },
-                                );
-                              }
-                              return SizedBox();
-                            },
-                          ),
-                          SizedBox(height: 40),
-                          Container(
-                            margin: EdgeInsets.only(top: 10, bottom: 15),
-                            width: double.infinity,
-                            child: BlocBuilder<NoteScreenBloc, NoteScreenState>(
-                              builder: (context, state) {
-                                if (state is NoteScreenLoaded) {
-                                  return SubmitButton(
-                                    formkey: _formKey,
-                                    title: isEdit ? "Edit Note" : "Add Note",
-                                    titleBold: FontWeight.w800,
-                                    isButtonEnabled: state.buttonStatus,
-                                    successMessage: isEdit
-                                        ? "Your note has been updated"
-                                        : "Your note has been saved",
-                                    failedMessage: isEdit
-                                        ? "Failed to edit note. Please try again"
-                                        : "Failed to add note. Please try again",
-                                    successPadding: isEdit ? 30 : 40,
-                                    failedPadding: 30,
-                                    fontSizeNotification: 12,
-                                    validation: () async {
-                                      return _submit(context);
+                                ),
+                                SizedBox(height: 40),
+                                Container(
+                                  margin: EdgeInsets.only(top: 10, bottom: 15),
+                                  width: double.infinity,
+                                  child: ValueListenableBuilder<bool>(
+                                    valueListenable: isButtonEnabled,
+                                    builder: (context, validation, _) {
+                                      return SubmitButton(
+                                        formkey: _formKey,
+                                        title:
+                                            isEdit ? "Edit Note" : "Add Note",
+                                        titleBold: FontWeight.w800,
+                                        isButtonEnabled: validation,
+                                        successMessage: isEdit
+                                            ? "Your note has been updated"
+                                            : "Your note has been saved",
+                                        failedMessage: isEdit
+                                            ? "Failed to edit note. Please try again"
+                                            : "Failed to add note. Please try again",
+                                        successPadding: isEdit ? 30 : 40,
+                                        failedPadding: 30,
+                                        fontSizeNotification: 12,
+                                        validation: () async {
+                                          return _submit(context);
+                                        },
+                                      );
                                     },
-                                  );
-                                }
-                                return SizedBox();
-                              },
+                                  ),
+                                )
+                              ],
                             ),
-                          )
-                        ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
+                    );
+                  } else {
+                    return Text("$state");
+                  }
+                },
               )
             ],
           ),

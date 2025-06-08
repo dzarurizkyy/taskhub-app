@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:taskhub_app/app.dart';
 import 'package:taskhub_app/bloc/class/note_bloc.dart';
-import 'package:taskhub_app/bloc/class/note_screen_bloc.dart';
 import 'package:taskhub_app/bloc/class/user_bloc.dart';
 import 'package:taskhub_app/pages/add_note_page.dart';
 import 'package:taskhub_app/pages/detail_note_page.dart';
@@ -17,8 +17,6 @@ import 'package:taskhub_app/service/user_service.dart';
 class AppRouter {
   final NoteBloc note = NoteBloc(NoteService());
   final UserBloc user = UserBloc(UserService(), AuthService());
-  final NoteScreenBloc noteScreen =
-      NoteScreenBloc(initialPriority: "High", initialButtonStatus: false);
 
   Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -56,22 +54,16 @@ class AppRouter {
         );
       case AddNotePage.routeName:
         return MaterialPageRoute(
-          builder: (context) => MultiBlocProvider(
-            providers: [
-              BlocProvider.value(value: note),
-              BlocProvider.value(value: noteScreen)
-            ],
+          builder: (context) => BlocProvider.value(
+            value: note,
             child: AddNotePage(),
           ),
         );
       case EditNotePage.routeName:
         return MaterialPageRoute(
           settings: settings,
-          builder: (context) => MultiBlocProvider(
-            providers: [
-              BlocProvider.value(value: note),
-              BlocProvider.value(value: noteScreen)
-            ],
+          builder: (context) => BlocProvider.value(
+            value: note,
             child: EditNotePage(),
           ),
         );
@@ -80,6 +72,16 @@ class AppRouter {
           builder: (context) => BlocProvider.value(
             value: user,
             child: EditProfilePage(),
+          ),
+        );
+      case App.routeName:
+        return MaterialPageRoute(
+          builder: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: note),
+              BlocProvider.value(value: user)
+            ],
+            child: App(flavor: "development"),
           ),
         );
       default:
@@ -95,7 +97,6 @@ class AppRouter {
 
   void dispose() {
     note.close();
-    noteScreen.close();
     user.close();
   }
 }

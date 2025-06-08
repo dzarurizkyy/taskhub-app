@@ -23,3 +23,4 @@ class UpdateProfile extends UserEvent {
 }
 
 class LoadCurrentUser extends UserEvent {}
+class ResetUser extends UserEvent {}

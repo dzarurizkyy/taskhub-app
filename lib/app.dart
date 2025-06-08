@@ -7,6 +7,8 @@ import 'package:taskhub_app/routes/routes.dart';
 import 'package:taskhub_app/service/auth_service.dart';
 
 class App extends StatelessWidget {
+  static const routeName = "/main";
+
   final String flavor;
   final AuthService authService;
   final AppRouter appRouter;
@@ -25,7 +27,12 @@ class App extends StatelessWidget {
           return MaterialApp(
             title: "TaskHub App",
             home: Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+              backgroundColor: const Color.fromRGBO(255, 255, 255, 1.0),
+              body: Center(
+                child: CircularProgressIndicator(
+                  color: const Color.fromARGB(1000, 32, 180, 224),
+                ),
+              ),
             ),
             debugShowCheckedModeBanner: false,
           );

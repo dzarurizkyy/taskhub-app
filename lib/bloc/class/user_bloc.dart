@@ -15,6 +15,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<LoginUser>(_onLoginUser);
     on<UpdateProfile>(_onUpdateProfile);
     on<LoadCurrentUser>(_onLoadCurrentUser);
+    on<ResetUser>(_onResetUser);
   }
 
   Future<void> _onLoadCurrentUser(
@@ -85,7 +86,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString("user_id", userID);
-
+  
       emit(UserLoaded(user));
     } catch (e) {
       emit(UserError("Failed to create user. Please try again."));
@@ -102,5 +103,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     } catch (e) {
       emit(UserError("Failed to update profile. Please try again"));
     }
+  }
+
+  Future<void> _onResetUser(ResetUser event, Emitter<UserState> emit) async {
+    emit(UserInitial());
   }
 }

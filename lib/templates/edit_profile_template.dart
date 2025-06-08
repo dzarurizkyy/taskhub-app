@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taskhub_app/app.dart';
 import 'package:taskhub_app/helpers/formating.dart';
 import 'package:taskhub_app/helpers/validation.dart';
 import 'package:taskhub_app/models/user.dart';
 import 'package:taskhub_app/bloc/class/user_bloc.dart';
 import 'package:taskhub_app/bloc/state/user_state.dart';
-import 'package:taskhub_app/pages/login_page.dart';
 import 'package:taskhub_app/service/auth_service.dart';
 import 'package:taskhub_app/widgets/card/profile_avatar.dart';
 import 'package:taskhub_app/widgets/button/edit_profile_button.dart';
@@ -163,27 +162,25 @@ class EditProfileTemplate extends StatelessWidget {
                             ),
                           ),
                           Center(
-                              child: InkWell(
-                            onTap: () async {
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.clear();
-                              authService.logout();
-
-                              if (!context.mounted) return;
-                              Navigator.pushReplacementNamed(
-                                  context, LoginPage.routeName);
-                            },
-                            child: Text(
-                              "Log Out",
-                              style: TextStyle(
-                                fontFamily: "Nunito",
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                                color: const Color.fromARGB(1000, 32, 180, 224),
+                            child: InkWell(
+                              onTap: () async {
+                                authService.logout();
+                                if (!context.mounted) return;
+                                Navigator.pushReplacementNamed(
+                                    context, App.routeName);
+                              },
+                              child: Text(
+                                "Log Out",
+                                style: TextStyle(
+                                  fontFamily: "Nunito",
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color:
+                                      const Color.fromARGB(1000, 32, 180, 224),
+                                ),
                               ),
                             ),
-                          ))
+                          )
                         ],
                       ),
                     ),
