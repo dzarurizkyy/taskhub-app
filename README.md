@@ -19,6 +19,7 @@ To run this application, you need:
 
 - [Android Studio](https://developer.android.com/studio)
 - [Flutter](https://flutter.dev/)
+- [Firebase](https://youtu.be/WziEDorxvkQ?si=jevJxZXfKI7qyAl0)
 
 ## Installation and Usage 🚀
 Follow these steps to set up dan run the application:
@@ -39,6 +40,12 @@ Follow these steps to set up dan run the application:
 
   ```
   flutter pub get
+  ```
+
+- Add google-services.json
+  
+  ```
+  android/app/google-services.json
   ```
 
 - Run application
