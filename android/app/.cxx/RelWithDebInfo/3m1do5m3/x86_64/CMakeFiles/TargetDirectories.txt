@@ -1,2 +1,0 @@
-/Users/dzarurizky/Documents/code/portfolio/taskhub-app/android/app/.cxx/RelWithDebInfo/3m1do5m3/x86_64/CMakeFiles/edit_cache.dir
-/Users/dzarurizky/Documents/code/portfolio/taskhub-app/android/app/.cxx/RelWithDebInfo/3m1do5m3/x86_64/CMakeFiles/rebuild_cache.dir

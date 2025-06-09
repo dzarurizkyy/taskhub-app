@@ -87,6 +87,8 @@ class Login extends StatelessWidget {
 
                                   Navigator.pushReplacementNamed(
                                       context, HomePage.routeName);
+                                  Navigator.pushReplacementNamed(
+                                      context, HomePage.routeName);
                                   return true;
                                 }
                               }
