@@ -1,19 +1,13 @@
 .dart_tool/
 .packages
 build/
-android/app/.cxx/Debug
-# ios/Flutter
-# macos/Flutter
-# macos/Podfile
-# ios/Podfile
 
-
-pubspec.lock
 doc/api/
+android/app/.cxx/Debug
 android/app/google-services.json
+pubspec.lock
 
 .env*
-
 *.dart.js
 *.info.json      
 *.js             
